@@ -82,24 +82,25 @@ export function Integration() {
             </h2>
             <p className="text-text-secondary mb-8 leading-relaxed">
               Import the audit function, pass your skill source and chain config.
-              Get back a deterministic verdict with evidence in milliseconds.
+              Get back a deterministic verdict with evidence in milliseconds — or
+              call the hosted HTTP API at <span className="font-mono text-text-primary">POST /api/audit</span>.
             </p>
 
             <div className="bg-bg-card border border-border-subtle rounded-lg p-6 mb-6">
               <div className="flex items-center gap-3 mb-4">
                 <IconX402 size={20} />
-                <span className="font-mono text-[13px] font-semibold">Pricing</span>
+                <span className="font-mono text-[13px] font-semibold">Free &amp; open source</span>
               </div>
               <div className="space-y-3">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold text-accent">$0.05</span>
-                  <span className="text-[13px] text-text-muted font-mono">USDC / scan</span>
+                  <span className="text-3xl font-bold text-accent">$0</span>
+                  <span className="text-[13px] text-text-muted font-mono">MIT licensed</span>
                 </div>
                 <div className="text-[13px] text-text-secondary">
-                  Free for public repository skills
+                  Run it locally, in CI, or call the hosted API. No key required.
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {["Base chain (8453)", "x402-ready", "USDC payment"].map((tag) => (
+                  {["Base chain (8453)", "Deterministic", "x402 pricing — soon"].map((tag) => (
                     <span key={tag} className="px-2.5 py-1 bg-bg-elevated border border-border-subtle rounded font-mono text-[11px] text-text-muted">
                       {tag}
                     </span>
@@ -109,7 +110,9 @@ export function Integration() {
             </div>
 
             <a
-              href="#"
+              href="https://github.com/usephylax/phylax-skill-audit"
+              target="_blank"
+              rel="noopener"
               className="inline-flex items-center gap-2 text-[13px] text-accent hover:text-accent/80 transition-colors font-medium"
             >
               View full documentation

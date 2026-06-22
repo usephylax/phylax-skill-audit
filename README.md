@@ -1,13 +1,52 @@
-# Phylax — Skill Audit
+<p align="center">
+  <img src="assets/phylax-logo.svg" width="84" alt="Phylax" />
+</p>
 
-Pre-install security audit for agent skills on **Base** (chain ID 8453).
+<h1 align="center">Phylax — Skill Audit</h1>
+
+<p align="center">
+  <strong>Pre-install security verdicts for agent skills on Base.</strong><br/>
+  Scan a skill before it touches your wallet. Get a deterministic <code>ALLOW</code> / <code>WARN</code> / <code>DENY</code> with evidence.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/phylax-skill-audit"><img src="https://img.shields.io/npm/v/phylax-skill-audit?style=flat-square&color=3B82F6" alt="npm"></a>
+  <img src="https://img.shields.io/badge/license-MIT-3ddc97?style=flat-square" alt="MIT">
+  <img src="https://img.shields.io/badge/chain-Base%208453-48D8FF?style=flat-square" alt="Base">
+  <a href="https://github.com/aaronjmars/aeon"><img src="https://img.shields.io/badge/skill-merged%20into%20Aeon-b98cff?style=flat-square" alt="Aeon"></a>
+  <a href="https://usephylax.com"><img src="https://img.shields.io/badge/site-usephylax.com-E8E8EC?style=flat-square" alt="Site"></a>
+</p>
+
+---
 
 Scans `SKILL.md` + manifest for prompt-injection and secret-exfiltration,
 audits referenced contracts (unlimited approvals, upgradeable owner, honeypot),
 and validates x402 endpoints. Returns a **deterministic** risk verdict
 (`ALLOW` / `WARN` / `DENY`) with evidence.
 
-## Quick Start
+> **Demo:** [`assets/phylax-demo.mp4`](assets/phylax-demo.mp4) — a 15s walkthrough of the CLI flagging a honeypot skill.
+
+## Use it
+
+Four ways, all live:
+
+```bash
+# 1. Install from npm
+npm install phylax-skill-audit
+
+# 2. Run the CLI (no install needed)
+npx phylax --skill ./SKILL.md
+
+# 3. Call the hosted HTTP API
+curl -X POST https://usephylax.com/api/audit \
+  -H "Content-Type: application/json" \
+  -d '{"skill_source":"github.com/owner/repo/SKILL.md"}'
+
+# 4. As an Aeon skill
+./add-skill aaronjmars/aeon phylax-audit
+```
+
+## Build from source
 
 ```bash
 npm install
@@ -19,15 +58,15 @@ npm test
 
 ```bash
 # Scan a local SKILL.md
-node dist/cli.js --skill ./path/to/SKILL.md
+npx phylax --skill ./path/to/SKILL.md
 
 # Scan with explicit contracts + endpoints
-node dist/cli.js --skill ./SKILL.md \
+npx phylax --skill ./SKILL.md \
   --contracts "0xabc... (chainId:8453)" \
   --endpoints "https://api.example.com"
 
 # Deep mode (onchain simulation)
-node dist/cli.js --skill ./SKILL.md --mode deep
+npx phylax --skill ./SKILL.md --mode deep
 ```
 
 ### Exit Codes
@@ -54,6 +93,30 @@ console.log(result.verdict); // "ALLOW" | "WARN" | "DENY"
 console.log(result.score);   // 0–100
 console.log(result.findings);
 ```
+
+## HTTP API
+
+A hosted endpoint wraps the same `audit()` engine:
+
+```
+POST https://usephylax.com/api/audit
+Content-Type: application/json
+```
+
+```jsonc
+// request body
+{
+  "skill_source": "github.com/owner/repo/SKILL.md", // required
+  "skill_md": "...",      // optional raw SKILL.md (else fetched from source)
+  "contracts": [],        // optional, auto-extracted
+  "endpoints": [],        // optional, auto-extracted
+  "chain_id": 8453,       // default Base
+  "mode": "fast"          // "fast" | "deep"
+}
+```
+
+Returns the same `AuditOutput` JSON (`verdict`, `score`, `findings`, `summary`, `ttl`).
+Rate-limited to 20 requests/min per IP. `GET /api/audit` returns a self-describing usage doc.
 
 ## Scoring
 
@@ -121,3 +184,9 @@ phylax-skill-audit/
 ## License
 
 MIT
+
+---
+
+<p align="center">
+  <sub>Phylax is a native <code>onchain-security</code> skill in <a href="https://github.com/aaronjmars/aeon">Aeon</a> — <code>./add-skill aaronjmars/aeon phylax-audit</code></sub>
+</p>

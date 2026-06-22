@@ -3,5 +3,19 @@
   "outputDirectory": "dist/client",
   "framework": null,
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "www.usephylax.com" }],
+      "destination": "https://usephylax.com/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.usephylax.com" }],
+      "destination": "https://usephylax.com/:path*",
+      "permanent": true
+    }
+  ]
 }

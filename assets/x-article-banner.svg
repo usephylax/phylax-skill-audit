@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A0F1C"/>
+      <stop offset="0.55" stop-color="#070A12"/>
+      <stop offset="1" stop-color="#05070B"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="800" y1="250" x2="800" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#48D8FF"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+    <radialGradient id="core" cx="300" cy="450" r="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#11203A"/>
+      <stop offset="1" stop-color="#0E0E14"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="1080" cy="430" r="560" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1B3A66" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#1B3A66" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#halo)"/>
+
+  <!-- faint grid -->
+  <g stroke="#121A2A" stroke-width="1" opacity="0.5">
+    <line x1="0" y1="225" x2="1600" y2="225"/>
+    <line x1="0" y1="450" x2="1600" y2="450"/>
+    <line x1="0" y1="675" x2="1600" y2="675"/>
+    <line x1="640" y1="0" x2="640" y2="900"/>
+    <line x1="1040" y1="0" x2="1040" y2="900"/>
+  </g>
+
+  <!-- scan sweep -->
+  <line x1="360" y1="450" x2="1440" y2="450" stroke="#48D8FF" stroke-width="1.5" stroke-dasharray="3 7" opacity="0.28"/>
+
+  <!-- Shield logo (left, centered vertically) -->
+  <g transform="translate(300 450) scale(7) translate(-16 -16)">
+    <path d="M16 2 L28 6 V15 C28 23 22.5 27.5 16 30 C9.5 27.5 4 23 4 15 V6 Z" fill="url(#core)" stroke="url(#edge)" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="16" cy="14.5" r="5" fill="none" stroke="#3B82F6" stroke-width="1.5"/>
+    <circle cx="16" cy="14.5" r="1.6" fill="#48D8FF"/>
+    <line x1="16" y1="7.5" x2="16" y2="9.6" stroke="#48D8FF" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="16" y1="19.4" x2="16" y2="21.5" stroke="#48D8FF" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="9" y1="14.5" x2="11.1" y2="14.5" stroke="#48D8FF" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="20.9" y1="14.5" x2="23" y2="14.5" stroke="#48D8FF" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Text block (right) -->
+  <text x="600" y="350" font-family="'IBM Plex Mono','DejaVu Sans Mono',monospace" font-size="40" font-weight="600" fill="#8888A0" letter-spacing="2">PRE-INSTALL SECURITY · BASE</text>
+  <text x="600" y="452" font-family="'IBM Plex Mono','DejaVu Sans Mono',monospace" font-size="104" font-weight="700" fill="#E8E8EC">phylax</text>
+  <text x="600" y="528" font-family="Inter,'DejaVu Sans',sans-serif" font-size="40" font-weight="500" fill="#9aa0ae">Audit agent skills before they</text>
+  <text x="600" y="582" font-family="Inter,'DejaVu Sans',sans-serif" font-size="40" font-weight="700" fill="#48D8FF">drain your wallet.</text>
+
+  <!-- verdict chips -->
+  <g font-family="'IBM Plex Mono','DejaVu Sans Mono',monospace" font-size="30" font-weight="700" transform="translate(600 650)">
+    <rect x="0" y="0" width="150" height="56" rx="8" fill="#3ddc9722" stroke="#3ddc9755"/>
+    <text x="75" y="38" text-anchor="middle" fill="#3ddc97">ALLOW</text>
+    <rect x="170" y="0" width="140" height="56" rx="8" fill="#f5c45122" stroke="#f5c45155"/>
+    <text x="240" y="38" text-anchor="middle" fill="#f5c451">WARN</text>
+    <rect x="330" y="0" width="132" height="56" rx="8" fill="#ff6b6b22" stroke="#ff6b6b55"/>
+    <text x="396" y="38" text-anchor="middle" fill="#ff6b6b">DENY</text>
+  </g>
+
+  <text x="600" y="772" font-family="'IBM Plex Mono','DejaVu Sans Mono',monospace" font-size="26" fill="#5a6072">usephylax.com  ·  npm i phylax-skill-audit  ·  native skill in Aeon</text>
+</svg>

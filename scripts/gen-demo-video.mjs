@@ -1,6 +1,6 @@
-// gen-demo-video.mjs — Programmatically render a Phylax demo MP4.
-// Pipeline: build SVG frames (Phylax terminal theme) -> PNG (rsvg-convert) -> MP4 (ffmpeg).
-// No screen recording. Deterministic, brand-synced with usephylax.com.
+// gen-demo-video.mjs — Render a polished macOS-style terminal demo MP4 for Phylax.
+// Pipeline: SVG frames -> PNG (rsvg-convert) -> MP4 (ffmpeg). 60fps, eased, slow-paced,
+// with explainer captions. Brand-synced with usephylax.com.
 
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -10,26 +10,46 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const FRAMES = resolve(ROOT, ".demo-frames");
-const OUT = resolve(ROOT, "phylax-demo.mp4");
+const OUT = resolve(ROOT, "assets", "phylax-demo.mp4");
 
-const W = 1280, H = 720, FPS = 30;
+const W = 1280, H = 720, FPS = 60;
 
-// Brand palette (matches site theme)
 const C = {
-  bg: "#08080C", card: "#0E0E14", border: "#1E1E26",
+  text: "#E6E7EB", sub: "#9aa0ae", muted: "#5a6072",
   accent: "#3B82F6", scan: "#48D8FF",
-  text: "#E8E8EC", sub: "#8888A0", muted: "#4A4A5A",
-  green: "#34D399", red: "#F87171", yellow: "#FACC15",
+  green: "#3ddc97", red: "#ff6b6b", yellow: "#f5c451", purple: "#b98cff",
+  termTop: "#2b2f3a", termBody: "#0f1118", termBorder: "#3a3f4d",
 };
 const MONO = "DejaVu Sans Mono, monospace";
 const SANS = "DejaVu Sans, sans-serif";
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const easeInOut = (t) => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
 
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+// ---- desktop background (subtle macOS-like gradient wallpaper) ----
+function bg() {
+  return `
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="${W}" y2="${H}" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a0f1c"/>
+      <stop offset="0.5" stop-color="#0c1322"/>
+      <stop offset="1" stop-color="#070a12"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="${W*0.7}" cy="${H*0.25}" r="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1b3a66" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#1b3a66" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="24" stdDeviation="34" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#wall)"/>
+  <rect width="${W}" height="${H}" fill="url(#halo)"/>`;
+}
 
-// Shield logo markup at (x,y) scale s
-function logo(x, y, s) {
+function shieldLogo(x, y, s, glow = false) {
   return `<g transform="translate(${x} ${y}) scale(${s})">
-    <path d="M16 2 L28 6 V15 C28 23 22.5 27.5 16 30 C9.5 27.5 4 23 4 15 V6 Z" fill="${C.card}" stroke="${C.scan}" stroke-width="2" stroke-linejoin="round"/>
+    ${glow ? `<circle cx="16" cy="15" r="15" fill="${C.scan}" opacity="0.18"/>` : ""}
+    <path d="M16 2 L28 6 V15 C28 23 22.5 27.5 16 30 C9.5 27.5 4 23 4 15 V6 Z" fill="#0E0E14" stroke="${C.scan}" stroke-width="2" stroke-linejoin="round"/>
     <circle cx="16" cy="14.5" r="5" fill="none" stroke="${C.accent}" stroke-width="1.8"/>
     <circle cx="16" cy="14.5" r="1.6" fill="${C.scan}"/>
     <line x1="16" y1="7" x2="16" y2="9.5" stroke="${C.scan}" stroke-width="1.4" stroke-linecap="round"/>
@@ -39,138 +59,161 @@ function logo(x, y, s) {
   </g>`;
 }
 
-function frameSVG(bodyLines, opts = {}) {
-  const { showCursor = false, cursorRow = 0, badge = null } = opts;
-  const termX = 140, termY = 150, termW = 1000, termH = 430;
-  const lineH = 26, padX = 28, padY = 56;
+// ---- macOS terminal window ----
+const TX = 150, TY = 96, TW = 980, TH = 470;     // window rect
+const PADX = 30, BODY_TOP = TY + 46 + 24, LH = 27;
 
-  let lines = "";
-  bodyLines.forEach((ln, i) => {
-    const y = termY + padY + i * lineH;
-    const color = ln.color || C.text;
-    lines += `<text x="${termX + padX}" y="${y}" font-family="${MONO}" font-size="16" fill="${color}" xml:space="preserve">${esc(ln.t)}</text>`;
-    if (showCursor && i === cursorRow) {
-      const cx = termX + padX + esc(ln.t).length * 0; // approx; cursor drawn at end via tspan width
-    }
-  });
-
-  // blinking cursor block at end of cursorRow
-  let cursor = "";
-  if (showCursor) {
-    const y = termY + padY + cursorRow * lineH;
-    const approxX = termX + padX + (bodyLines[cursorRow]?.t.length || 0) * 9.6;
-    cursor = `<rect x="${approxX + 2}" y="${y - 13}" width="9" height="17" fill="${C.accent}" opacity="0.8"/>`;
-  }
-
-  let badgeEl = "";
-  if (badge) {
-    const bc = badge.kind === "DENY" ? C.red : badge.kind === "WARN" ? C.yellow : C.green;
-    badgeEl = `<g transform="translate(${termX + padX} ${termY + padY + (badge.row) * lineH})">
-      <rect x="-4" y="-18" width="${110}" height="26" rx="5" fill="${bc}22" stroke="${bc}55"/>
-      <text x="6" y="0" font-family="${MONO}" font-size="16" font-weight="bold" fill="${bc}">${badge.kind} ${badge.score}</text>
+function macWindow(innerSVG, opts = {}) {
+  const { title = "phylax — zsh — 80×24", caption = null, captionColor = C.scan } = opts;
+  let cap = "";
+  if (caption) {
+    cap = `<g transform="translate(${TX} ${TY + TH + 34})">
+      <circle cx="10" cy="-4" r="5" fill="${captionColor}"/>
+      <text x="26" y="0" font-family="${SANS}" font-size="19" fill="${C.text}">${esc(caption)}</text>
     </g>`;
   }
-
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <rect width="${W}" height="${H}" fill="${C.bg}"/>
-  <g stroke="${C.border}" stroke-width="1" opacity="0.4">
-    ${[180,360,540].map(y=>`<line x1="0" y1="${y}" x2="${W}" y2="${y}"/>`).join("")}
-  </g>
-  ${logo(70, 54, 2.2)}
-  <text x="150" y="92" font-family="${MONO}" font-size="34" font-weight="bold" fill="${C.text}">phylax</text>
-  <text x="152" y="118" font-family="${SANS}" font-size="15" fill="${C.sub}">Pre-install risk verdicts for agent skills</text>
+  ${bg()}
+  <!-- top brand strip -->
+  ${shieldLogo(40, 28, 1.3)}
+  <text x="84" y="52" font-family="${MONO}" font-size="20" font-weight="bold" fill="${C.text}">phylax</text>
 
-  <rect x="${termX}" y="${termY}" width="${termW}" height="${termH}" rx="10" fill="${C.card}" stroke="${C.border}" stroke-width="1.5"/>
-  <g transform="translate(${termX+18} ${termY+22})">
-    <circle cx="0" cy="0" r="5" fill="#4A4A5A"/><circle cx="16" cy="0" r="5" fill="#4A4A5A"/><circle cx="32" cy="0" r="5" fill="#4A4A5A"/>
-    <text x="60" y="5" font-family="${MONO}" font-size="13" fill="${C.muted}">phylax audit</text>
+  <!-- window -->
+  <g filter="url(#shadow)">
+    <rect x="${TX}" y="${TY}" width="${TW}" height="${TH}" rx="14" fill="${C.termBody}" stroke="${C.termBorder}" stroke-width="1"/>
+    <path d="M${TX} ${TY+14} a14 14 0 0 1 14 -14 h${TW-28} a14 14 0 0 1 14 14 v32 h-${TW} z" fill="${C.termTop}"/>
+    <circle cx="${TX+22}" cy="${TY+23}" r="7" fill="#ff5f57"/>
+    <circle cx="${TX+44}" cy="${TY+23}" r="7" fill="#febc2e"/>
+    <circle cx="${TX+66}" cy="${TY+23}" r="7" fill="#28c840"/>
+    <text x="${TX+TW/2}" y="${TY+28}" text-anchor="middle" font-family="${SANS}" font-size="14" fill="${C.sub}">${esc(title)}</text>
   </g>
-  <line x1="${termX}" y1="${termY+38}" x2="${termX+termW}" y2="${termY+38}" stroke="${C.border}"/>
-  ${lines}
-  ${cursor}
-  ${badgeEl}
-  <text x="${termX}" y="640" font-family="${MONO}" font-size="15" fill="${C.muted}">usephylax.com  ·  npm i phylax-skill-audit  ·  native skill in Aeon</text>
+  ${innerSVG}
+  ${cap}
 </svg>`;
 }
 
-// ---- Storyboard ----
-const prompt = "$ npx phylax --skill ./honeypot-SKILL.md";
-const scanLines = [
-  { t: "▸ Loading rules from /rules/*.yaml", color: C.scan },
-  { t: "▸ Static scan  ........ prompt-injection, secret-exfil", color: C.scan },
-  { t: "▸ Onchain scan ........ Base 8453 bytecode + selectors", color: C.scan },
-  { t: "▸ Endpoint scan ....... x402 schema + price sanity", color: C.scan },
-];
-const findings = [
-  { t: "  CON-020  critical   sell_tax = 35%   (SKILL.md:23)", color: C.red },
-  { t: "  CON-012  high       owner mint()/pause()  (SKILL.md:20)", color: C.yellow },
-  { t: "  CON-030  medium     contract has no bytecode", color: C.sub },
-];
+// render terminal text lines + optional cursor + optional verdict badge
+function termBody(lines, opts = {}) {
+  const { cursorRow = null, cursorCol = 0, badge = null } = opts;
+  let out = "";
+  lines.forEach((ln, i) => {
+    const y = BODY_TOP + i * LH;
+    out += `<text x="${TX+PADX}" y="${y}" font-family="${MONO}" font-size="17" fill="${ln.color||C.text}" xml:space="preserve">${esc(ln.t)}</text>`;
+  });
+  if (cursorRow !== null) {
+    const y = BODY_TOP + cursorRow * LH;
+    const x = TX + PADX + cursorCol * 10.2;
+    out += `<rect x="${x+1}" y="${y-14}" width="9" height="18" fill="${C.scan}" opacity="0.85"/>`;
+  }
+  if (badge) {
+    const bc = badge.kind === "DENY" ? C.red : badge.kind === "WARN" ? C.yellow : C.green;
+    const y = BODY_TOP + badge.row * LH;
+    out += `<g transform="translate(${TX+PADX} ${y})">
+      <rect x="-6" y="-19" width="150" height="28" rx="6" fill="${bc}22" stroke="${bc}66"/>
+      <text x="6" y="1" font-family="${MONO}" font-size="17" font-weight="bold" fill="${bc}">${badge.kind}  score ${badge.score}</text>
+    </g>`;
+  }
+  return out;
+}
 
-// ---- Intro / Outro cards ----
-function cardSVG(opts) {
-  const { title, sub, lines = [], badge = null } = opts;
+// ---- full-screen brand card (intro / outro) ----
+function card(opts) {
+  const { title, sub, lines = [], badge = null, glow = true } = opts;
   let body = "";
   lines.forEach((ln, i) => {
-    body += `<text x="${W/2}" y="${430 + i*40}" text-anchor="middle" font-family="${MONO}" font-size="20" fill="${ln.color||C.sub}">${esc(ln.t)}</text>`;
+    body += `<text x="${W/2}" y="${452 + i*42}" text-anchor="middle" font-family="${MONO}" font-size="21" fill="${ln.color||C.sub}">${esc(ln.t)}</text>`;
   });
   let badgeEl = "";
   if (badge) {
     const bc = badge.kind === "DENY" ? C.red : C.green;
-    badgeEl = `<g transform="translate(${W/2} 320)">
-      <rect x="-130" y="-36" width="260" height="64" rx="10" fill="${bc}22" stroke="${bc}66" stroke-width="2"/>
-      <text x="0" y="10" text-anchor="middle" font-family="${MONO}" font-size="36" font-weight="bold" fill="${bc}">${badge.kind} · ${badge.score}</text>
+    badgeEl = `<g transform="translate(${W/2} 340)">
+      <rect x="-135" y="-37" width="270" height="66" rx="12" fill="${bc}22" stroke="${bc}77" stroke-width="2"/>
+      <text x="0" y="11" text-anchor="middle" font-family="${MONO}" font-size="38" font-weight="bold" fill="${bc}">${badge.kind} · ${badge.score}</text>
     </g>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <rect width="${W}" height="${H}" fill="${C.bg}"/>
-  <radialGradient id="g" cx="${W/2}" cy="300" r="430" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#13233f"/><stop offset="1" stop-color="${C.bg}"/>
-  </radialGradient>
-  <rect width="${W}" height="${H}" fill="url(#g)"/>
-  ${logo(W/2 - 60, 105, 3.7)}
-  <text x="${W/2}" y="275" text-anchor="middle" font-family="${MONO}" font-size="54" font-weight="bold" fill="${C.text}">${esc(title)}</text>
-  ${sub ? `<text x="${W/2}" y="318" text-anchor="middle" font-family="${SANS}" font-size="22" fill="${C.sub}">${esc(sub)}</text>` : ""}
+  ${bg()}
+  ${shieldLogo(W/2 - 64, 108, 4.0, glow)}
+  <text x="${W/2}" y="288" text-anchor="middle" font-family="${MONO}" font-size="58" font-weight="bold" fill="${C.text}">${esc(title)}</text>
+  ${sub ? `<text x="${W/2}" y="332" text-anchor="middle" font-family="${SANS}" font-size="23" fill="${C.sub}">${esc(sub)}</text>` : ""}
   ${badgeEl}
   ${body}
 </svg>`;
 }
 
+// ====== STORYBOARD ======
+const prompt = "$ npx phylax --skill ./swap-helper/SKILL.md --mode deep";
+const scan = [
+  { t: "▸ Loading 30+ rules from /rules/*.yaml", color: C.scan },
+  { t: "▸ [1/3] Static scan   — reading SKILL.md line by line", color: C.scan },
+  { t: "      prompt-injection · secret-exfil · obfuscation", color: C.muted },
+  { t: "▸ [2/3] Onchain scan  — Base 8453 via eth_getCode", color: C.scan },
+  { t: "      bytecode selectors · proxy · honeypot powers", color: C.muted },
+  { t: "▸ [3/3] Endpoint scan — probing x402 endpoints", color: C.scan },
+  { t: "      HTTPS · 402 schema · price sanity", color: C.muted },
+];
+const findings = [
+  { t: "  ✗ CON-020  critical   \"sell_tax = 35%\"            SKILL.md:23", color: C.red },
+  { t: "  ✗ CON-012  high       owner mint() / pause()      SKILL.md:20", color: C.yellow },
+  { t: "  ! CON-030  medium     contract has no bytecode    onchain", color: C.sub },
+];
+
 const frames = [];
-const hold = (svg, n) => { for (let i=0;i<n;i++) frames.push(svg); };
+const hold = (svg, n) => { for (let i = 0; i < n; i++) frames.push(svg); };
 
-// INTRO (~2.3s)
-hold(cardSVG({ title: "phylax", sub: "Pre-install risk verdicts for agent skills" }), 70);
+// caption helper
+const W1 = "How it works: one command audits a skill before you install it.";
+const W2 = "It runs three independent scanners and merges the findings.";
+const W3 = "Each finding subtracts a weight from 100 → a deterministic verdict.";
+const W4 = "Critical issues found. Phylax says DENY — don't install.";
 
-// 1) type the command (char by char)
+// 1) INTRO (3.0s) with gentle fade-in via opacity ramp
+for (let i = 0; i < 40; i++) {
+  const o = easeInOut(Math.min(1, i / 30));
+  frames.push(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${bg()}
+    <g opacity="${o.toFixed(3)}">${shieldLogo(W/2-64,108,4.0,true)}
+    <text x="${W/2}" y="288" text-anchor="middle" font-family="${MONO}" font-size="58" font-weight="bold" fill="${C.text}">phylax</text>
+    <text x="${W/2}" y="332" text-anchor="middle" font-family="${SANS}" font-size="23" fill="${C.sub}">Pre-install risk verdicts for agent skills</text></g></svg>`);
+}
+hold(card({ title: "phylax", sub: "Pre-install risk verdicts for agent skills" }), 70);
+
+// 2) prompt appears, then TYPE the command slowly (~3 chars per 2 frames)
+hold(macWindow(termBody([{ t: "" }], { cursorRow: 0, cursorCol: 0 }), { caption: W1 }), 45);
 for (let i = 1; i <= prompt.length; i++) {
-  frames.push(frameSVG([{ t: prompt.slice(0, i) }], { showCursor: true, cursorRow: 0 }));
+  const svg = macWindow(termBody([{ t: prompt.slice(0, i) }], { cursorRow: 0, cursorCol: i }), { caption: W1 });
+  frames.push(svg); frames.push(svg); // 2 frames per char => slow, readable
 }
-hold(frameSVG([{ t: prompt }], { showCursor: true, cursorRow: 0 }), 18);
+// blink cursor after typing (~1.2s)
+for (let b = 0; b < 36; b++) {
+  const on = Math.floor(b / 9) % 2 === 0;
+  hold(macWindow(termBody([{ t: prompt }], on ? { cursorRow: 0, cursorCol: prompt.length } : {}), { caption: W1 }), 1);
+}
 
-// 2) scan lines appear one by one
-const acc = [{ t: prompt }];
-for (const s of scanLines) {
+// 3) scan lines reveal one-by-one, slowly
+const acc = [{ t: prompt }, { t: "" }];
+hold(macWindow(termBody([...acc]), { caption: W2 }), 20);
+for (const s of scan) {
   acc.push(s);
-  hold(frameSVG([...acc]), 14);
+  hold(macWindow(termBody([...acc]), { caption: W2 }), 26); // ~0.43s each
 }
-hold(frameSVG([...acc]), 10);
+hold(macWindow(termBody([...acc]), { caption: W2 }), 30);
 
-// 3) divider + verdict header + findings reveal
+// 4) verdict header + findings reveal
 acc.push({ t: "" });
-acc.push({ t: "VERDICT", color: C.muted });
-const verdictRowIndex = acc.length - 1;
-hold(frameSVG([...acc], { badge: { kind: "DENY", score: 27, row: verdictRowIndex } }), 16);
+acc.push({ t: "── verdict ─────────────────────────────────", color: C.muted });
+const vRow = acc.length;
+acc.push({ t: "" });
+hold(macWindow(termBody([...acc], { badge: { kind: "DENY", score: 27, row: vRow } }), { caption: W3, captionColor: C.yellow }), 36);
 for (const f of findings) {
   acc.push(f);
-  hold(frameSVG([...acc], { badge: { kind: "DENY", score: 27, row: verdictRowIndex } }), 12);
+  hold(macWindow(termBody([...acc], { badge: { kind: "DENY", score: 27, row: vRow } }), { caption: W3, captionColor: C.yellow }), 30);
 }
 acc.push({ t: "" });
-acc.push({ t: "→ Critical issues found. Do not install.", color: C.text });
-hold(frameSVG([...acc], { badge: { kind: "DENY", score: 27, row: verdictRowIndex } }), 75);
+acc.push({ t: "→ score 100 − (40+20+10) = 27   →  DENY", color: C.text });
+hold(macWindow(termBody([...acc], { badge: { kind: "DENY", score: 27, row: vRow } }), { caption: W4, captionColor: C.red }), 90);
 
-// OUTRO (~3s) — CTA card
-hold(cardSVG({
+// 5) OUTRO (4s)
+hold(card({
   title: "phylax",
   badge: { kind: "DENY", score: 27 },
   lines: [
@@ -178,26 +221,24 @@ hold(cardSVG({
     { t: "POST usephylax.com/api/audit", color: C.scan },
     { t: "./add-skill aaronjmars/aeon phylax-audit", color: C.accent },
   ],
-}), 95);
+}), 150);
 
-// ---- Render ----
+// ====== RENDER ======
 rmSync(FRAMES, { recursive: true, force: true });
 mkdirSync(FRAMES, { recursive: true });
-console.log(`Rendering ${frames.length} frames...`);
+console.log(`Rendering ${frames.length} frames @ ${FPS}fps (~${(frames.length/FPS).toFixed(1)}s)...`);
 frames.forEach((svg, i) => {
   const n = String(i).padStart(5, "0");
-  const svgPath = resolve(FRAMES, `f${n}.svg`);
-  const pngPath = resolve(FRAMES, `f${n}.png`);
-  writeFileSync(svgPath, svg);
-  execFileSync("rsvg-convert", ["-w", String(W), "-h", String(H), svgPath, "-o", pngPath]);
+  const sp = resolve(FRAMES, `f${n}.svg`);
+  const pp = resolve(FRAMES, `f${n}.png`);
+  writeFileSync(sp, svg);
+  execFileSync("rsvg-convert", ["-w", String(W), "-h", String(H), sp, "-o", pp]);
 });
-
 console.log("Encoding MP4...");
 execFileSync("ffmpeg", [
   "-y", "-framerate", String(FPS), "-i", resolve(FRAMES, "f%05d.png"),
-  "-c:v", "libx264", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
-  "-vf", "scale=1280:720", OUT,
+  "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
+  "-movflags", "+faststart", OUT,
 ], { stdio: "inherit" });
-
 rmSync(FRAMES, { recursive: true, force: true });
 console.log("Done →", OUT);

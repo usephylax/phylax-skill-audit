@@ -1,0 +1,52 @@
+# Phylax Rules — Secret Exfiltration (SEC-*)
+# Detects requests for private keys, seed phrases, or overly broad secret access.
+
+rules:
+  - id: SEC-001
+    severity: critical
+    description: "Directly requests private key or seed phrase"
+    patterns:
+      - "private[_\\s-]?key"
+      - "seed[_\\s-]?phrase"
+      - "mnemonic"
+      - "secret[_\\s-]?key"
+      - "kunci[_\\s-]?privat"
+      - "seed[_\\s-]?phrase"
+      - "privatekey"
+      - "priv[_\\s-]?key"
+
+  - id: SEC-002
+    severity: critical
+    description: "Requests environment variables containing secrets"
+    patterns:
+      - "process\\.env\\.(PRIVATE_KEY|SECRET|MNEMONIC|SEED|WALLET_KEY|DEPLOY_KEY)"
+      - "os\\.environ\\.(PRIVATE_KEY|SECRET|MNEMONIC|SEED|WALLET_KEY|DEPLOY_KEY)"
+      - "os\\.getenv\\(['\"]?(PRIVATE_KEY|SECRET|MNEMONIC|SEED|WALLET_KEY)"
+
+  - id: SEC-003
+    severity: high
+    description: "Requests wallet unlock or keystore file access"
+    patterns:
+      - "unlock\\s+wallet"
+      - "keystore\\s+file"
+      - "wallet\\.json"
+      - "UTC--.*--"                    # keystore filename pattern
+      - "\\.env\\s+(file|contents?|variables?)"
+
+  - id: SEC-004
+    severity: high
+    description: "Asks to export or copy key material"
+    patterns:
+      - "export\\s+(private|secret)\\s+key"
+      - "copy\\s+(private|secret)\\s+key"
+      - "ekspor\\s+kunci\\s+privat"
+      - "dump\\s+(wallet|keys?)"
+
+  - id: SEC-005
+    severity: medium
+    description: "Overly broad file-system access request"
+    patterns:
+      - "read\\s+(all|entire|every)\\s+(file|directory|folder)"
+      - "/(home|root|Users)/.*\\.(json|key|pem|p12)"
+      - "~/(\\.)?ssh/"
+      - "~/(\\.)?gnupg/"

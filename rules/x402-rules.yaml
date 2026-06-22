@@ -1,0 +1,60 @@
+# Phylax Rules — x402 Endpoint (X402-*)
+# Validates x402 payment-gated endpoints: schema validity, receipt verification,
+# price sanity, reachability, TLS, and redirect chains.
+
+rules:
+  - id: X402-001
+    severity: high
+    description: "Endpoint returns invalid or missing x402 402 response schema"
+    patterns:
+      - "missing.*x-payment-required"
+      - "invalid.*402.*schema"
+      - "no.*payment.*header"
+
+  - id: X402-002
+    severity: high
+    description: "x402 receipt cannot be verified onchain"
+    patterns:
+      - "receipt.*invalid"
+      - "receipt.*expired"
+      - "receipt.*not.*found"
+      - "receipt.*chain.*mismatch"
+
+  - id: X402-030
+    severity: medium
+    description: "Price deviates > 5x from median of comparable skills"
+    patterns:
+      - "price.*deviation.*exceeds"
+      - "overpriced"
+      - "underpriced.*suspicious"
+
+  - id: X402-031
+    severity: low
+    description: "Price is zero or negative (possible free-tier exploit)"
+    patterns:
+      - "price.*=\\s*0"
+      - "amount.*=\\s*0"
+      - "free.*tier.*abuse"
+
+  - id: X402-040
+    severity: medium
+    description: "Endpoint unreachable or returns non-200/402 status"
+    patterns:
+      - "connection.*refused"
+      - "timeout"
+      - "dns.*resolution.*failed"
+      - "status.*5[0-9]{2}"
+
+  - id: X402-041
+    severity: high
+    description: "Endpoint uses HTTP instead of HTTPS"
+    patterns:
+      - "^http://(?!localhost|127\\.0\\.0\\.1)"
+
+  - id: X402-042
+    severity: high
+    description: "Suspicious redirect chain (> 3 hops or redirects to different domain)"
+    patterns:
+      - "redirect.*exceeds"
+      - "redirect.*different.*domain"
+      - "open.*redirect"

@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# Nested site app
+site/node_modules/
+site/dist/
+site/.vercel/
+
+# Vercel
+.vercel/
+
+# Env
+.env
+.env.*

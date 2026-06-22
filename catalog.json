@@ -1,0 +1,15 @@
+{
+  "slug": "phylax-skill-audit",
+  "name": "Phylax — Skill Audit",
+  "description": "Pre-install security audit for Base agent skills: prompt-injection, secret exfiltration, contract & x402 risk. Deterministic ALLOW/WARN/DENY verdict.",
+  "install": {
+    "type": "external",
+    "provider": "Phylax",
+    "command": "npx skills add phylax/skill-audit",
+    "reference": null
+  },
+  "pricing": {
+    "model": "x402",
+    "amount_usdc": 0.05
+  }
+}

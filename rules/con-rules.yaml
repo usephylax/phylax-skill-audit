@@ -1,0 +1,71 @@
+# Phylax Rules — Contract Risk (CON-*)
+# Detects risky on-chain patterns: unlimited approvals, upgradeable proxies,
+# owner-centralization, honeypot behaviour, and dangerous function selectors.
+
+rules:
+  - id: CON-010
+    severity: high
+    description: "Unlimited token approval (approve max uint256)"
+    selector: "0x095ea7b3"  # approve(address,uint256)
+    patterns:
+      - "approve.*(?:2\\^256|uint256\\.max|ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff|\\-1)"
+
+  - id: CON-011
+    severity: high
+    description: "Upgradeable proxy with single EOA owner"
+    selector: "proxy"
+    patterns:
+      - "implementation\\(\\)"
+      - "upgradeTo(address)"
+      - "upgradeToAndCall(address,bytes)"
+      - "changeAdmin(address)"
+
+  - id: CON-012
+    severity: high
+    description: "Contract has owner-only privileged functions (mint/burn/pause/blacklist)"
+    patterns:
+      - "function\\s+mint\\s*\\("
+      - "function\\s+burn\\s*\\("
+      - "function\\s+pause\\s*\\("
+      - "function\\s+unpause\\s*\\("
+      - "function\\s+blacklist\\s*\\("
+      - "function\\s+addToBlacklist\\s*\\("
+      - "function\\s+setFee\\s*\\("
+      - "function\\s+setTax\\s*\\("
+
+  - id: CON-013
+    severity: medium
+    description: "Self-destruct or delegatecall to user-supplied address"
+    selector: "0xff"
+    patterns:
+      - "selfdestruct\\s*\\("
+      - "suicide\\s*\\("
+      - "delegatecall\\s*\\("
+
+  - id: CON-020
+    severity: critical
+    description: "Honeypot: sell tax > 10% or transfer blocked after buy"
+    selector: "honeypot-sim"
+    patterns:
+      - "sell[_\\s]?tax\\s*(=|>|>=|greater|above|超过)\\s*\\d+"
+      - "sell[_\\s]?tax.*(%|percent)"
+      - "transfer[_\\s]?blocked"
+      - "trading[_\\s]?disabled"
+      - "swap[_\\s]?failed"
+
+  - id: CON-021
+    severity: critical
+    description: "Hidden mint function (no supply cap or backdoor)"
+    patterns:
+      - "totalSupply\\s*=\\s*0"
+      - "no\\s*(supply\\s+)?cap"
+      - "unlimited\\s+mint"
+      - "mint\\s*(to|for)\\s*(owner|deployer|self)"
+
+  - id: CON-030
+    severity: medium
+    description: "Contract source not verified on block explorer"
+    patterns:
+      - "not.*verified"
+      - "unverified.*contract"
+      - "source.*unavailable"

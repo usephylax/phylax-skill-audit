@@ -1,0 +1,36 @@
+# Phylax Rules — Liquidity & Holder Concentration (LIQ-*)
+# Detects low-liquidity pools, top-heavy holder distribution, and rug-pull signals.
+
+rules:
+  - id: LIQ-050
+    severity: medium
+    description: "Liquidity below minimum threshold (< $10k USD)"
+    patterns:
+      - "liquidity.*below.*threshold"
+      - "low.*liquidity"
+      - "pool.*empty"
+
+  - id: LIQ-051
+    severity: medium
+    description: "Top holder owns > 50% of circulating supply"
+    patterns:
+      - "top.*holder.*>.*50"
+      - "whale.*concentration"
+      - "single.*holder.*majority"
+
+  - id: LIQ-052
+    severity: high
+    description: "Liquidity removable by single address (no lock or timelock)"
+    patterns:
+      - "liquidity.*not.*locked"
+      - "removeLiquidity.*owner"
+      - "no.*timelock"
+
+  - id: LIQ-053
+    severity: high
+    description: "Token contract allows owner to drain pool (rug-pull vector)"
+    patterns:
+      - "transferFrom.*owner.*pool"
+      - "sweep.*tokens"
+      - "rescue.*tokens"
+      - "drain.*liquidity"

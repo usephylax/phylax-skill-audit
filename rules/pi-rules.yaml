@@ -1,0 +1,49 @@
+# Phylax Rules — Prompt Injection (PI-*)
+# Detects hidden instructions, fund transfer commands, and social-engineering
+# patterns embedded in SKILL.md or manifest files.
+
+rules:
+  - id: PI-001
+    severity: critical
+    description: "Embedded fund transfer instruction detected in skill text"
+    patterns:
+      - "transfer\\s+(all|entire|my)?\\s*(usdc|eth|usdt|dai|funds?|balance|tokens?)\\s+to\\s+0x[a-fA-F0-9]{40}"
+      - "send\\s+(all|entire|my)?\\s*(usdc|eth|usdt|dai|funds?|balance|tokens?)\\s+to\\s+0x[a-fA-F0-9]{40}"
+      - "kirim\\s+(semua|seluruh|dana|saldo|token)s?\\s+(ke|ke\\s+rekening)\\s+0x[a-fA-F0-9]{40}"
+      - "approve\\s+(unlimited|unlimited\\s+amount|maximum)\\s+(to|for)\\s+0x[a-fA-F0-9]{40}"
+
+  - id: PI-002
+    severity: critical
+    description: "Instruction to override or ignore safety rules"
+    patterns:
+      - "ignore\\s+(all\\s+)?(previous|prior|above|earlier)\\s+(instructions?|rules?|guidelines?|constraints?)"
+      - "disregard\\s+(all\\s+)?(previous|prior|above)\\s+(instructions?|rules?|guidelines?)"
+      - "abaikan\\s+(semua\\s+)?(instruksi|aturan|panduan)\\s+(sebelumnya|di\\s+atas)"
+      - "override\\s+(safety|security|guardrail)s?"
+      - "you\\s+are\\s+now\\s+(DAN|jailbreak|unrestricted)"
+      - "pretend\\s+(you\\s+are|to\\s+be)\\s+(an?\\s+)?(evil|malicious|unrestricted)"
+
+  - id: PI-003
+    severity: high
+    description: "Embedded transaction signing request"
+    patterns:
+      - "sign\\s+(this\\s+)?transaction"
+      - "execute\\s+(this\\s+)?(swap|transfer|approval|transaction)"
+      - "tanda\\s*tangani\\s+(transaksi|tx)"
+
+  - id: PI-004
+    severity: high
+    description: "Hidden instruction via zero-width or invisible characters"
+    patterns:
+      - "[\\u200b\\u200c\\u200d\\ufeff]{3,}"  # 3+ zero-width chars in sequence
+
+  - id: PI-005
+    severity: medium
+    description: "Prompt asks to download or execute external code"
+    patterns:
+      - "curl\\s+.*\\|\\s*(bash|sh|python|node)"
+      - "wget\\s+.*\\|\\s*(bash|sh|python|node)"
+      - "eval\\s*\\("
+      - "exec\\s*\\("
+      - "import\\s+subprocess"
+      - "child_process"

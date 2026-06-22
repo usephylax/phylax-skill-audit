@@ -1,0 +1,41 @@
+# Phylax Rules — Manifest Integrity (MAN-*)
+# Validates catalog.json / skills.json structure and slug consistency.
+
+rules:
+  - id: MAN-001
+    severity: low
+    description: "catalog.json missing required field"
+    patterns:
+      - "missing.*slug"
+      - "missing.*name"
+      - "missing.*description"
+
+  - id: MAN-002
+    severity: low
+    description: "catalog.json contains invalid JSON"
+    patterns:
+      - "unexpected.*token"
+      - "json.*parse.*error"
+      - "invalid.*json"
+
+  - id: MAN-003
+    severity: medium
+    description: "Slug in catalog.json does not match folder name"
+    patterns:
+      - "slug.*mismatch"
+      - "folder.*slug.*differ"
+
+  - id: MAN-004
+    severity: low
+    description: "frontmatter name or description is empty"
+    patterns:
+      - "name:\\s*$"
+      - "description:\\s*$"
+
+  - id: MAN-005
+    severity: medium
+    description: "Install command references unknown or deprecated package manager"
+    patterns:
+      - "npm\\s+install\\s+.*--global"
+      - "yarn\\s+global\\s+add"
+      - "pip\\s+install\\s+.*--user"

@@ -14,3 +14,7 @@ site/.vercel/
 # Env
 .env
 .env.*
+
+# npm pack / temp test artifacts
+*.tgz
+.tmp-*/

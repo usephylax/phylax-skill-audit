@@ -8,11 +8,29 @@
   "bin": {
     "phylax": "dist/cli.js"
   },
+  "files": [
+    "dist",
+    "rules",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "cli": "node dist/cli.js"
+    "cli": "node dist/cli.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usephylax/phylax-skill-audit.git"
+  },
+  "homepage": "https://usephylax.com",
+  "bugs": {
+    "url": "https://github.com/usephylax/phylax-skill-audit/issues"
   },
   "keywords": ["security", "audit", "base", "agent-skills", "x402", "web3"],
   "license": "MIT",

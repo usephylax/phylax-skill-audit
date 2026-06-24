@@ -5,16 +5,54 @@
  * MAN (manifest integrity).
  */
 
-import type { Finding, Rule, ScanResult } from "../types.js";
+import type { Finding, Rule, ScanResult, Severity } from "../types.js";
+
+/** Severity ladder used to downgrade documentation-context matches. */
+const DOWNGRADE: Record<Severity, Severity | null> = {
+  critical: "high",
+  high: "medium",
+  medium: "low",
+  low: null, // low inside docs → dropped
+};
+
+/**
+ * Precompute, for each line, whether it sits inside a fenced code block
+ * (``` ... ```) or is a Markdown blockquote (> ...). Matches in these
+ * contexts are documentation/examples, not live payloads, so they are
+ * downgraded one severity tier (and dropped if already `low`).
+ *
+ * This prevents false-positive DENYs on skills that *describe* dangerous
+ * patterns as part of their own docs (e.g. a security skill listing the
+ * very strings it detects).
+ */
+function computeDocContext(lines: string[]): boolean[] {
+  const inDoc: boolean[] = new Array(lines.length).fill(false);
+  let fenced = false;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    const isFence = /^(```|~~~)/.test(trimmed);
+    if (isFence) {
+      // The fence delimiter line itself counts as doc context, then toggle.
+      inDoc[i] = true;
+      fenced = !fenced;
+      continue;
+    }
+    if (fenced) { inDoc[i] = true; continue; }
+    if (/^>/.test(trimmed)) inDoc[i] = true; // blockquote
+  }
+  return inDoc;
+}
 
 /**
  * Run static regex scan on the given text against a set of rules.
  * Each rule's `patterns[]` are compiled to RegExp and matched against `text`.
- * Returns findings with line-level evidence.
+ * Returns findings with line-level evidence. Matches inside code blocks or
+ * blockquotes are downgraded one severity tier (documentation context).
  */
 export function runStaticScan(text: string, rules: Rule[]): ScanResult {
   const findings: Finding[] = [];
   const lines = text.split("\n");
+  const inDoc = computeDocContext(lines);
 
   for (const rule of rules) {
     if (!rule.patterns || rule.patterns.length === 0) continue;
@@ -35,10 +73,21 @@ export function runStaticScan(text: string, rules: Rule[]): ScanResult {
           // Reset lastIndex for global regexes
           regex.lastIndex = 0;
 
+          let severity: Severity = rule.severity;
+          let note = "";
+          if (inDoc[i]) {
+            const downgraded = DOWNGRADE[rule.severity];
+            if (downgraded === null) {
+              break; // low-severity doc-context match → drop entirely
+            }
+            severity = downgraded;
+            note = " [doc-context: downgraded]";
+          }
+
           findings.push({
             id: rule.id,
-            severity: rule.severity,
-            evidence: `Line ${i + 1}: "${line.trim().substring(0, 200)}"`,
+            severity,
+            evidence: `Line ${i + 1}: "${line.trim().substring(0, 200)}"${note}`,
             ref: `SKILL.md#L${i + 1}`,
           });
           break; // One finding per rule per file (deduplicate)

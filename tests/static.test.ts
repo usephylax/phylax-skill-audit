@@ -93,3 +93,31 @@ describe("Static Scanner — Honeypot Skill", () => {
     expect(con012!.severity).toBe("high");
   });
 });
+
+describe("Static Scanner — Documentation context downgrade", () => {
+  it("downgrades critical findings inside code blocks / blockquotes", () => {
+    const text = loadFixture("doc-skill.md");
+    const allCats = ["PI", "SEC", "CON"].flatMap((c) => rulesByCategory(allRules, c));
+    const result = runStaticScan(text, allCats);
+
+    // Every finding here comes from doc context (code fence or blockquote),
+    // so none should remain `critical`.
+    const criticals = result.findings.filter((f) => f.severity === "critical");
+    expect(criticals).toHaveLength(0);
+
+    // And the ones that do surface are tagged as downgraded.
+    for (const f of result.findings) {
+      expect(f.evidence).toContain("doc-context: downgraded");
+    }
+  });
+
+  it("does NOT downgrade the same patterns in plain prose (inject fixture)", () => {
+    const text = loadFixture("inject-skill.md");
+    const piRulesLocal = rulesByCategory(allRules, "PI");
+    const result = runStaticScan(text, piRulesLocal);
+    const pi001 = result.findings.find((f) => f.id === "PI-001");
+    expect(pi001).toBeDefined();
+    expect(pi001!.severity).toBe("critical"); // plain prose stays critical
+    expect(pi001!.evidence).not.toContain("doc-context");
+  });
+});

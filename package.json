@@ -1,6 +1,6 @@
 {
   "name": "phylax-skill-audit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pre-install security audit for Base-chain agent skills. Deterministic ALLOW/WARN/DENY verdict.",
   "type": "module",
   "main": "dist/index.js",
@@ -32,7 +32,14 @@
   "bugs": {
     "url": "https://github.com/usephylax/phylax-skill-audit/issues"
   },
-  "keywords": ["security", "audit", "base", "agent-skills", "x402", "web3"],
+  "keywords": [
+    "security",
+    "audit",
+    "base",
+    "agent-skills",
+    "x402",
+    "web3"
+  ],
   "license": "MIT",
   "dependencies": {
     "yaml": "^2.4.0"

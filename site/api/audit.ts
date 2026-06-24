@@ -1,109 +1,80 @@
 // api/audit.ts — Vercel serverless function exposing Phylax as an HTTP API.
 //
-// POST /api/audit
-//   body: {
-//     skill_source: string            (required — URL, github ref, or identifier)
-//     skill_md?:    string            (raw SKILL.md; if omitted, audit() fetches skill_source)
-//     manifest?:    string            (raw catalog.json/skills.json)
-//     contracts?:   string[]          ("0x... (chainId:8453)")
-//     endpoints?:   string[]          ("https://...")
-//     chain_id?:    number            (default 8453)
-//     mode?:        "fast" | "deep"   (default "fast")
-//   }
-//   200 -> AuditOutput JSON { verdict, score, findings, summary, ttl, attested }
+// POST /api/audit   body: { skill_source, skill_md?, manifest?, contracts?, endpoints?, chain_id?, mode? }
+// GET  /api/audit?skill=<owner/repo|url>&mode=fast   — quick one-shot audit (cached 24h)
+// GET  /api/audit   (no query)                       — self-describing usage doc
 //
-// GET /api/audit -> lightweight usage doc (so the endpoint is self-describing).
+// Returns AuditOutput JSON { verdict, score, findings, summary, ttl, attested }.
 
 import { audit, type AuditInput } from "phylax-skill-audit";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import {
+  cors, clientIp, rateLimited, resolveSkillUrl, cacheGet, cacheSet,
+  ALLOWED_MODES, MAX_BODY_BYTES,
+} from "./_lib.js";
 
-const MAX_BODY_BYTES = 256 * 1024; // 256KB cap on request payloads
-const ALLOWED_MODES = new Set(["fast", "deep"]);
-
-// ── Lightweight in-memory rate limiter ──────────────────────────────────────
-// Best-effort per-warm-instance limiter (no external store). Caps abuse from a
-// single hot instance; for hard global limits, swap in Upstash/Vercel KV later.
-const RATE_LIMIT = 20;          // requests
-const RATE_WINDOW_MS = 60_000;  // per 60s per IP
-const hits = new Map<string, number[]>();
-
-function clientIp(req: VercelRequest): string {
-  const xff = req.headers["x-forwarded-for"];
-  const raw = Array.isArray(xff) ? xff[0] : xff;
-  return (raw?.split(",")[0].trim()) || req.socket?.remoteAddress || "unknown";
-}
-
-function rateLimited(ip: string): { limited: boolean; remaining: number; resetMs: number } {
-  const now = Date.now();
-  const arr = (hits.get(ip) || []).filter((t) => now - t < RATE_WINDOW_MS);
-  const remaining = Math.max(0, RATE_LIMIT - arr.length);
-  const resetMs = arr.length ? RATE_WINDOW_MS - (now - arr[0]) : RATE_WINDOW_MS;
-  if (arr.length >= RATE_LIMIT) {
-    hits.set(ip, arr);
-    return { limited: true, remaining: 0, resetMs };
+function applyRate(req: VercelRequest, res: VercelResponse): boolean {
+  const rl = rateLimited(clientIp(req));
+  res.setHeader("X-RateLimit-Limit", String(rl.limit));
+  res.setHeader("X-RateLimit-Remaining", String(rl.remaining));
+  if (rl.limited) {
+    res.setHeader("Retry-After", String(Math.ceil(rl.resetMs / 1000)));
+    res.status(429).json({ error: "Rate limit exceeded.", detail: `Retry in ${Math.ceil(rl.resetMs / 1000)}s.` });
+    return false;
   }
-  arr.push(now);
-  hits.set(ip, arr);
-  // opportunistic cleanup so the map doesn't grow unbounded
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) if (!v.some((t) => now - t < RATE_WINDOW_MS)) hits.delete(k);
-  }
-  return { limited: false, remaining: remaining - 1, resetMs };
-}
-
-function cors(res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  return true;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   cors(res);
 
-  if (req.method === "OPTIONS") {
-    res.status(204).end();
-    return;
-  }
+  if (req.method === "OPTIONS") { res.status(204).end(); return; }
 
+  // ── GET ────────────────────────────────────────────────────────────────
   if (req.method === "GET") {
-    res.status(200).json({
-      service: "phylax-skill-audit",
-      endpoint: "POST /api/audit",
-      docs: "https://github.com/usephylax/phylax-skill-audit",
-      body: {
-        skill_source: "string (required)",
-        skill_md: "string (optional raw SKILL.md)",
-        manifest: "string (optional)",
-        contracts: "string[] (optional)",
-        endpoints: "string[] (optional)",
-        chain_id: "number (default 8453)",
-        mode: "'fast' | 'deep' (default 'fast')",
-      },
-      returns: "{ verdict: 'ALLOW'|'WARN'|'DENY', score, findings, summary, ttl, attested }",
-    });
+    const skill = typeof req.query.skill === "string" ? req.query.skill : undefined;
+
+    // No ?skill → self-doc
+    if (!skill) {
+      res.status(200).json({
+        service: "phylax-skill-audit",
+        endpoints: {
+          "POST /api/audit": "full audit — JSON body { skill_source, skill_md?, ... }",
+          "GET /api/audit?skill=<owner/repo|url>": "quick audit by skill ref (cached 24h)",
+          "GET /api/badge?skill=<owner/repo|url>": "SVG verdict badge for embedding",
+        },
+        docs: "https://github.com/usephylax/phylax-skill-audit",
+        returns: "{ verdict: 'ALLOW'|'WARN'|'DENY', score, findings, summary, ttl, attested }",
+      });
+      return;
+    }
+
+    if (!applyRate(req, res)) return;
+    const mode = req.query.mode === "deep" ? "deep" : "fast";
+    const cacheKey = `${skill}::${mode}`;
+    const cached = cacheGet(cacheKey);
+    if (cached) { res.setHeader("X-Cache", "HIT"); res.status(200).json(cached); return; }
+
+    try {
+      const url = resolveSkillUrl(skill);
+      const result = await audit({ skill_source: url, mode });
+      cacheSet(cacheKey, result);
+      res.setHeader("X-Cache", "MISS");
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ error: "Audit failed.", detail: err instanceof Error ? err.message : String(err) });
+    }
     return;
   }
 
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed. Use POST." });
+    res.status(405).json({ error: "Method not allowed. Use GET or POST." });
     return;
   }
 
-  // Rate limit (best-effort, per warm instance)
-  const ip = clientIp(req);
-  const rl = rateLimited(ip);
-  res.setHeader("X-RateLimit-Limit", String(RATE_LIMIT));
-  res.setHeader("X-RateLimit-Remaining", String(rl.remaining));
-  if (rl.limited) {
-    res.setHeader("Retry-After", String(Math.ceil(rl.resetMs / 1000)));
-    res.status(429).json({
-      error: "Rate limit exceeded.",
-      detail: `Max ${RATE_LIMIT} requests per minute. Retry in ${Math.ceil(rl.resetMs / 1000)}s.`,
-    });
-    return;
-  }
+  // ── POST ───────────────────────────────────────────────────────────────
+  if (!applyRate(req, res)) return;
 
-  // Parse + validate body (Vercel usually pre-parses JSON; guard either way).
   let body: unknown = req.body;
   try {
     if (typeof body === "string") {
@@ -117,7 +88,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(400).json({ error: "Invalid JSON body." });
     return;
   }
-
   if (!body || typeof body !== "object") {
     res.status(400).json({ error: "Request body must be a JSON object." });
     return;
@@ -157,9 +127,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const result = await audit(input);
     res.status(200).json(result);
   } catch (err) {
-    res.status(500).json({
-      error: "Audit failed.",
-      detail: err instanceof Error ? err.message : String(err),
-    });
+    res.status(500).json({ error: "Audit failed.", detail: err instanceof Error ? err.message : String(err) });
   }
 }

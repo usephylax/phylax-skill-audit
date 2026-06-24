@@ -1,0 +1,18 @@
+{
+  "name": "Phylax",
+  "symbol": "PHYLAX",
+  "decimals": 18,
+  "description": "Phylax is a pre-install security audit for agent skills on Base. It scans SKILL.md, onchain contracts, and x402 endpoints, then returns a deterministic ALLOW / WARN / DENY verdict with evidence. Open source (MIT) and a native skill in Aeon.",
+  "image": "https://usephylax.com/token-logo.png",
+  "external_url": "https://usephylax.com",
+  "links": {
+    "website": "https://usephylax.com",
+    "twitter": "https://x.com/usephylax",
+    "github": "https://github.com/usephylax/phylax-skill-audit",
+    "npm": "https://www.npmjs.com/package/phylax-skill-audit",
+    "docs": "https://github.com/usephylax/phylax-skill-audit#readme"
+  },
+  "tags": ["security", "base", "agent-skills", "x402", "infra", "open-source"],
+  "chain": "base",
+  "chainId": 8453
+}

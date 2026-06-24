@@ -44,10 +44,27 @@ function computeDocContext(lines: string[]): boolean[] {
 }
 
 /**
+ * True if the regex's match on `line` falls inside an inline-code span
+ * (backticks). Documentation often quotes dangerous strings as `code`.
+ */
+function matchInInlineCode(line: string, regex: RegExp): boolean {
+  regex.lastIndex = 0;
+  const m = regex.exec(line);
+  regex.lastIndex = 0;
+  if (!m) return false;
+  const start = m.index;
+  // Count unescaped backticks before the match start; odd = inside a span.
+  let ticks = 0;
+  for (let i = 0; i < start && i < line.length; i++) if (line[i] === "`") ticks++;
+  return ticks % 2 === 1;
+}
+
+/**
  * Run static regex scan on the given text against a set of rules.
  * Each rule's `patterns[]` are compiled to RegExp and matched against `text`.
- * Returns findings with line-level evidence. Matches inside code blocks or
- * blockquotes are downgraded one severity tier (documentation context).
+ * Returns findings with line-level evidence. Matches inside code blocks,
+ * blockquotes, or inline-code spans are downgraded one severity tier
+ * (documentation context).
  */
 export function runStaticScan(text: string, rules: Rule[]): ScanResult {
   const findings: Finding[] = [];
@@ -73,9 +90,10 @@ export function runStaticScan(text: string, rules: Rule[]): ScanResult {
           // Reset lastIndex for global regexes
           regex.lastIndex = 0;
 
+          const docContext = inDoc[i] || matchInInlineCode(line, regex);
           let severity: Severity = rule.severity;
           let note = "";
-          if (inDoc[i]) {
+          if (docContext) {
             const downgraded = DOWNGRADE[rule.severity];
             if (downgraded === null) {
               break; // low-severity doc-context match → drop entirely

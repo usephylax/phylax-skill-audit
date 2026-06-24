@@ -7,6 +7,7 @@ import { RulesTable } from "./components/RulesTable";
 import { ScoringVerdict } from "./components/ScoringVerdict";
 import { ExampleOutput } from "./components/ExampleOutput";
 import { Integration } from "./components/Integration";
+import { OfficialToken } from "./components/OfficialToken";
 import { FinalCta } from "./components/FinalCta";
 import { Footer } from "./components/Footer";
 
@@ -29,6 +30,8 @@ export default function App() {
           <ExampleOutput />
           <div className="section-divider" />
           <Integration />
+          <div className="section-divider" />
+          <OfficialToken />
           <div className="section-divider" />
           <FinalCta />
           <Footer />

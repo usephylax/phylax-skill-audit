@@ -1,36 +1,29 @@
-# Phylax Token — Launch Announcement (fill in ADDRESS after deploy)
+# Phylax Token — Launch Announcement
 
-## Main tweet (attach token logo or x-feature.png)
+Official contract (Base): 0xd7e608d398b88fe3084b495e9b86de2db343cba3
+Basescan: https://basescan.org/token/0xd7e608d398b88fe3084b495e9b86de2db343cba3
+
+## Main tweet (attach token logo / x-feature.png)
 ```
 $PHYLAX is live on Base 🛡️
 
-The official Phylax token. One contract — verify before you ape.
+Official contract — verify before you ape:
+0xd7e608d398b88fe3084b495e9b86de2db343cba3
 
-CA: <OFFICIAL_ADDRESS>
+The only real one. Anything else is fake.
 
-Trading fees keep Phylax free + open source. This is the only real one.
+usephylax.com
 ```
 
-## Reply 1 — proof / source of truth
+## Reply 1 — what it is
 ```
-Verify here, nowhere else:
+Phylax audits agent skills before they touch your wallet — ALLOW / WARN / DENY.
 
-→ usephylax.com/#token
-→ Basescan: basescan.org/token/<OFFICIAL_ADDRESS>
-
-Any other "Phylax" token is an impostor. Cross-check this post (pinned).
-```
-
-## Reply 2 — what it is
-```
-Phylax audits agent skills before they touch your wallet — static + onchain + x402 → ALLOW / WARN / DENY.
-
-Open source. Native skill in @aeonframework.
+Open source, native skill in @aeonframework.
 
 github.com/usephylax/phylax-skill-audit
 ```
 
-Notes:
-- Replace <OFFICIAL_ADDRESS> with the real launch address everywhere.
-- ⚠️ A stray test token 0xbaec2e4c22e9456b9d1f7d0ae68279ed0a9a2ba3 exists from a misfired deploy — it is NOT official. The announcement naming the real CA protects buyers from it.
+## Notes
 - Pin the main tweet.
+- ⚠️ A stray test token 0xbaec2e4c22e9456b9d1f7d0ae68279ed0a9a2ba3 exists from an earlier misfired deploy — NOT official. Naming the real CA above protects buyers.

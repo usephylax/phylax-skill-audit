@@ -4,7 +4,7 @@ import { IconShieldCheck, IconArrowRight } from "./Icons";
 // ── Official token config ────────────────────────────────────────────────────
 // Set TOKEN_ADDRESS to the real launch address once deployed. While empty,
 // the section renders a "coming soon" state instead of a fake address.
-const TOKEN_ADDRESS = ""; // e.g. "0x...."
+const TOKEN_ADDRESS = "0xd7e608d398b88fe3084b495e9b86de2db343cba3";
 const TOKEN_SYMBOL = "PHYLAX";
 const CHAIN = "Base";
 

@@ -14,5 +14,6 @@
   },
   "tags": ["security", "base", "agent-skills", "x402", "infra", "open-source"],
   "chain": "base",
-  "chainId": 8453
+  "chainId": 8453,
+  "tokenAddress": "0xd7e608d398b88fe3084b495e9b86de2db343cba3"
 }

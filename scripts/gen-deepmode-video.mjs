@@ -58,7 +58,7 @@ function shield(x, y, s, glow = 0) {
 
 function caption(txt, op, color = C.text) {
   if (op <= 0.01) return "";
-  return `<text x="${W/2}" y="650" text-anchor="middle" font-family="${SANS}" font-size="23" fill="${color}" opacity="${op.toFixed(3)}">${esc(txt)}</text>`;
+  return `<text x="${W/2}" y="600" text-anchor="middle" font-family="${SANS}" font-size="23" fill="${color}" opacity="${op.toFixed(3)}">${esc(txt)}</text>`;
 }
 function kicker(txt, op) {
   if (op <= 0.01) return "";
@@ -124,14 +124,14 @@ function frame(f) {
     s += kicker("THE TRAP", op);
     // token box center
     s += node(W/2, 300, 220, 90, "Honeypot token", "looks normal", C.border, 1);
-    // BUY arrow in (green) — animates first
+    // BUY arrow in (green) — reaches the box left edge (box: 530..750)
     const buyP = seg(f, T.problem[0] + 50, T.problem[0] + 110);
-    s += `<text x="250" y="250" font-family="${MONO}" font-size="18" fill="${C.green}" opacity="${clamp(buyP*2).toFixed(3)}">BUY</text>`;
-    s += flow(250, 388, 300, buyP, C.green);
-    // SELL arrow out (red) — blocked
+    s += `<text x="300" y="250" text-anchor="middle" font-family="${MONO}" font-size="18" fill="${C.green}" opacity="${clamp(buyP*2).toFixed(3)}">BUY</text>`;
+    s += flow(220, 528, 300, buyP, C.green);
+    // SELL arrow out (red) — starts at box right edge, blocked midway
     const sellP = seg(f, T.problem[0] + 120, T.problem[0] + 180);
-    s += `<text x="980" y="250" font-family="${MONO}" font-size="18" fill="${C.red}" opacity="${clamp(sellP*2).toFixed(3)}">SELL</text>`;
-    s += flow(612, 1030, 300, sellP, C.red, true);
+    s += `<text x="980" y="250" text-anchor="middle" font-family="${MONO}" font-size="18" fill="${C.red}" opacity="${clamp(sellP*2).toFixed(3)}">SELL</text>`;
+    s += flow(752, 1060, 300, sellP, C.red, true);
     s += caption("A honeypot lets you buy — then blocks the sell. Your funds are trapped.", clamp(seg(f, T.problem[0]+150, T.problem[0]+200)) * outP);
     s += `</g>`;
   }

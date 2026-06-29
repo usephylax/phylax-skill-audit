@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0a0f1c"/><stop offset="0.55" stop-color="#0a0d16"/><stop offset="1" stop-color="#06080e"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="800" cy="300" r="640" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#16335f" stop-opacity="0.45"/><stop offset="1" stop-color="#16335f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#halo)"/>
+
+  <g transform="translate(774 70) scale(1.7)">
+    <circle cx="16" cy="15" r="15" fill="#48D8FF" opacity="0.16"/>
+    <path d="M16 2 L28 6 V15 C28 23 22.5 27.5 16 30 C9.5 27.5 4 23 4 15 V6 Z" fill="#0E0E14" stroke="#48D8FF" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="16" cy="14.5" r="5" fill="none" stroke="#3B82F6" stroke-width="1.8"/>
+    <circle cx="16" cy="14.5" r="1.6" fill="#48D8FF"/>
+    <line x1="16" y1="7" x2="16" y2="9.5" stroke="#48D8FF" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="16" y1="19.5" x2="16" y2="22" stroke="#48D8FF" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="8.5" y1="14.5" x2="11" y2="14.5" stroke="#48D8FF" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="21" y1="14.5" x2="23.5" y2="14.5" stroke="#48D8FF" stroke-width="1.4" stroke-linecap="round"/>
+  </g>
+  <text x="800" y="170" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="34" font-weight="bold" fill="#E8E8EC">verdict badge for any agent skill</text>
+  <text x="800" y="210" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="20" fill="#8888A0">drop it on a skill listing — green ALLOW, amber WARN, red DENY</text>
+
+  <!-- three badges -->
+  <g transform="translate(332 320)">
+    <rect x="0" y="0" width="96" height="46" rx="8" fill="#11131b"/>
+    <rect x="88" y="0" width="8" height="46" fill="#11131b"/>
+    <rect x="96" y="0" width="120" height="46" rx="8" fill="#3ddc97"/>
+    <rect x="96" y="0" width="8" height="46" fill="#3ddc97"/>
+    <text x="48" y="29" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="600" fill="#48D8FF">phylax</text>
+    <text x="156" y="29" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="19" font-weight="700" fill="#0a0d12">ALLOW 97</text>
+  </g>
+  <g transform="translate(698.75 320)">
+    <rect x="0" y="0" width="96" height="46" rx="8" fill="#11131b"/>
+    <rect x="88" y="0" width="8" height="46" fill="#11131b"/>
+    <rect x="96" y="0" width="106.5" height="46" rx="8" fill="#f5c451"/>
+    <rect x="96" y="0" width="8" height="46" fill="#f5c451"/>
+    <text x="48" y="29" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="600" fill="#48D8FF">phylax</text>
+    <text x="149.25" y="29" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="19" font-weight="700" fill="#0a0d12">WARN 57</text>
+  </g>
+  <g transform="translate(1058.75 320)">
+    <rect x="0" y="0" width="96" height="46" rx="8" fill="#11131b"/>
+    <rect x="88" y="0" width="8" height="46" fill="#11131b"/>
+    <rect x="96" y="0" width="106.5" height="46" rx="8" fill="#ff6b6b"/>
+    <rect x="96" y="0" width="8" height="46" fill="#ff6b6b"/>
+    <text x="48" y="29" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="20" font-weight="600" fill="#48D8FF">phylax</text>
+    <text x="149.25" y="29" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="19" font-weight="700" fill="#0a0d12">DENY 27</text>
+  </g>
+
+  <!-- embed snippet card -->
+  <rect x="330" y="460" width="940" height="150" rx="12" fill="#0E0E14" stroke="#1E1E26"/>
+  <text x="360" y="500" font-family="DejaVu Sans Mono, monospace" font-size="15" fill="#4A4A5A">EMBED</text>
+  <text x="360" y="540" font-family="DejaVu Sans Mono, monospace" font-size="19" fill="#48D8FF">&lt;img src="usephylax.com/api/badge?skill=owner/repo"&gt;</text>
+  <text x="360" y="582" font-family="DejaVu Sans Mono, monospace" font-size="17" fill="#8888A0">deterministic · evidence-backed · free · Base</text>
+
+  <text x="800" y="700" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="22" fill="#E8E8EC">audit any agent skill before it touches your wallet</text>
+  <text x="800" y="800" text-anchor="middle" font-family="DejaVu Sans Mono, monospace" font-size="18" fill="#4A4A5A">usephylax.com · npm i phylax-skill-audit · native skill in Aeon</text>
+</svg>

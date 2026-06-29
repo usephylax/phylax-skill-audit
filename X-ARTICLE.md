@@ -1,14 +1,14 @@
 ══════════════════════════════════════════════════════════════
-  PETUNJUK FORMAT (jangan ikut di-copy ke X):
-  • [BANNER]  → upload assets/x-article-banner.png sebagai header artikel
-  • [VIDEO]   → sisipkan assets/phylax-demo.mp4 di titik ini
-  • **teks**  → di editor X, blok teksnya lalu klik Bold
-  • # / ##    → pakai tombol Heading / Subheading di toolbar X
-  • Enter tunggal antar paragraf — sudah dirapikan, jangan tambah jarak
+  FORMATTING GUIDE (do not copy this block into X):
+  • [BANNER]  → upload assets/x-article-banner.png as the article header
+  • [VIDEO]   → embed assets/phylax-demo.mp4 at this point
+  • **text**  → in the X editor, select the text then click Bold
+  • # / ##    → use the Heading / Subheading buttons in the X toolbar
+  • Single Enter between paragraphs — already spaced, don't add more
 ══════════════════════════════════════════════════════════════
 
 
-JUDUL ARTIKEL (taruh di field Title):
+ARTICLE TITLE (put this in the Title field):
 
 Phylax: audit agent skills before they drain your wallet
 

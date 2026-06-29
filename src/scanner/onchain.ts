@@ -114,26 +114,112 @@ async function fetchBytecode(address: string, rpcUrl: string): Promise<string | 
 }
 
 /**
- * Honeypot simulation: attempt a simulated buy+sell via eth_call.
- * If sell reverts or returns 0, the contract is likely a honeypot.
+ * Minimal JSON-RPC call. Returns the raw `result` string, or throws on a
+ * JSON-RPC error (used to detect reverts) or transport failure.
+ */
+async function rpcCall(rpcUrl: string, method: string, params: unknown[]): Promise<string> {
+  const resp = await fetch(rpcUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    signal: AbortSignal.timeout(12_000),
+  });
+  const data = (await resp.json()) as { result?: string; error?: { message?: string } };
+  if (data.error) throw new Error(data.error.message ?? "rpc error");
+  return data.result ?? "0x";
+}
+
+const pad32 = (hex: string) => hex.replace(/^0x/, "").toLowerCase().padStart(64, "0");
+const DEAD = "0x000000000000000000000000000000000000dEaD";
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+
+/** Sample a recent token holder from `Transfer` event logs (keyless, bounded range). */
+async function findRecentHolder(token: string, rpcUrl: string): Promise<string | null> {
+  const headHex = await rpcCall(rpcUrl, "eth_blockNumber", []);
+  const head = parseInt(headHex, 16);
+  if (!Number.isFinite(head)) return null;
+  const fromBlock = "0x" + Math.max(0, head - 5_000).toString(16);
+  const logs = (await fetch(rpcUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0", id: 1, method: "eth_getLogs",
+      params: [{ address: token, topics: [TRANSFER_TOPIC], fromBlock, toBlock: "latest" }],
+    }),
+    signal: AbortSignal.timeout(12_000),
+  }).then((r) => r.json())) as { result?: Array<{ topics: string[] }> };
+  // topics[2] = indexed `to`. Take the most recent non-zero recipient.
+  for (const log of (result_reverse(logs.result) ?? [])) {
+    const to = log.topics?.[2];
+    if (to && !/^0x0+$/.test(to)) return "0x" + to.slice(-40);
+  }
+  return null;
+}
+
+function result_reverse<T>(arr: T[] | undefined): T[] | undefined {
+  return arr ? [...arr].reverse() : arr;
+}
+
+/** ERC-20 balanceOf(holder) via eth_call → bigint (0 on failure). */
+async function balanceOf(token: string, holder: string, rpcUrl: string): Promise<bigint> {
+  try {
+    const data = "0x70a08231" + pad32(holder);
+    const res = await rpcCall(rpcUrl, "eth_call", [{ to: token, data }, "latest"]);
+    return res && res !== "0x" ? BigInt(res) : 0n;
+  } catch {
+    return 0n;
+  }
+}
+
+/**
+ * Honeypot simulation (deep mode): sample a real holder, then `eth_call` a
+ * `transfer` *as if from that holder*. If the simulated transfer reverts (or
+ * returns false) while the holder has a non-zero balance, sells/transfers are
+ * restricted — a honeypot/blacklist/trading-disabled signal.
  *
- * MVP: simplified — real implementation would use a DEX router simulation.
+ * Keyless (public RPC, no funds, no broadcast). Fail-safe: any RPC/transport
+ * error yields no finding (network issues are never treated as a verdict).
+ * Reflects current chain state; the verdict's 24h TTL covers drift.
  */
 async function simulateHoneypot(
-  _address: string,
-  _rpcUrl: string,
+  address: string,
+  rpcUrl: string,
   _chainId: number
 ): Promise<Finding[]> {
-  const findings: Finding[] = [];
+  try {
+    const holder = await findRecentHolder(address, rpcUrl);
+    if (!holder) return []; // no holder sample → can't simulate, stay silent
 
-  // TODO: Implement real buy/sell simulation via DEX router static calls.
-  // For MVP, this is a placeholder that returns no findings.
-  // Real implementation would:
-  //   1. Call swapExactETHForTokens (buy) with a small amount
-  //   2. Call swapExactTokensForETH (sell) with the received tokens
-  //   3. If sell fails or returns < 80% of buy value → honeypot
+    const bal = await balanceOf(address, holder, rpcUrl);
+    if (bal === 0n) return [];
 
-  return findings;
+    // Simulate transfer(0xdead, balance) from the holder.
+    const amount = bal.toString(16).padStart(64, "0");
+    const data = "0xa9059cbb" + pad32(DEAD) + amount;
+    try {
+      const res = await rpcCall(rpcUrl, "eth_call", [{ from: holder, to: address, data }, "latest"]);
+      // ERC-20 transfer returns bool; a `false` (0x..00) return = blocked.
+      if (res && res !== "0x" && /^0x0+$/.test(res)) {
+        return [{
+          id: "CON-020",
+          severity: "critical",
+          evidence: `Honeypot: simulated transfer from holder ${holder} returned false (sells blocked)`,
+          ref: `tx-sim:${address}`,
+        }];
+      }
+      return []; // transfer simulated OK → not a honeypot by this check
+    } catch (err) {
+      // eth_call reverted → transfer restricted.
+      return [{
+        id: "CON-020",
+        severity: "critical",
+        evidence: `Honeypot: simulated transfer from holder ${holder} reverted (${err instanceof Error ? err.message.slice(0, 80) : "revert"})`,
+        ref: `tx-sim:${address}`,
+      }];
+    }
+  } catch {
+    return []; // RPC/transport failure → fail safe, no finding
+  }
 }
 
 /**

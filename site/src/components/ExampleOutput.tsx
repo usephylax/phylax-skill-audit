@@ -57,7 +57,7 @@ export function ExampleOutput() {
   const lines = jsonOutput.split("\n");
 
   return (
-    <section className="py-24 px-6">
+    <section className="section-pad">
       <div className="max-w-4xl mx-auto">
         <m.div
           initial={{ opacity: 0, y: 15 }}
@@ -69,7 +69,7 @@ export function ExampleOutput() {
           <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
             EVIDENCE
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-balance">
+          <h2 className="section-heading">
             Verdict with <span className="text-accent">evidence</span>
           </h2>
           <p className="mt-4 text-text-secondary max-w-xl mx-auto text-base">
@@ -82,7 +82,7 @@ export function ExampleOutput() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden"
+          className="card-surface overflow-hidden"
         >
           <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle">
             <div className="flex items-center gap-2">

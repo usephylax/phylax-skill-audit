@@ -4,15 +4,15 @@ import { TOKEN, shortenAddress } from "../token";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
   { label: "npm", href: "https://www.npmjs.com/package/phylax-skill-audit" },
-  { label: "Bankr", href: "https://bankr.bot/agents/phylax" },
+  { label: "Bankr", href: TOKEN.bankr },
   { label: "Badge", href: "#embed" },
   { label: "Basescan", href: TOKEN.basescan },
 ] as const;
 
 export function Footer() {
   return (
-    <footer className="border-t border-border-subtle">
-      <div className="max-w-6xl mx-auto px-6 py-12">
+    <footer className="border-t border-border-subtle pb-[env(safe-area-inset-bottom)]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
             <PhylaxLogo size={20} />

@@ -24,7 +24,7 @@ const engines = [
 
 export function Engines() {
   return (
-    <section id="engines" className="py-24 px-6">
+    <section id="engines" className="section-pad">
       <div className="max-w-6xl mx-auto">
         <m.div
           initial={{ opacity: 0, y: 15 }}
@@ -36,7 +36,7 @@ export function Engines() {
           <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
             SCAN ENGINES
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-balance">
+          <h2 className="section-heading">
             Three engines. <span className="text-accent">One verdict.</span>
           </h2>
           <p className="mt-4 text-text-secondary max-w-xl mx-auto text-base">
@@ -52,7 +52,7 @@ export function Engines() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-bg-card border border-border-subtle rounded-lg p-6 hover:border-text-muted/30 transition-colors"
+              className="card-surface card-interactive p-5 sm:p-6"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 border border-border-subtle rounded">

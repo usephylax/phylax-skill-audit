@@ -65,9 +65,9 @@ const codeLines: { text: string; class?: string }[][] = [
 
 export function Integration() {
   return (
-    <section id="integration" className="py-24 px-6">
+    <section id="integration" className="section-pad">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-start">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
           <m.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -77,7 +77,7 @@ export function Integration() {
             <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
               INTEGRATION
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-5 text-balance">
+            <h2 className="section-heading mb-4 sm:mb-5">
               One function call. <span className="text-accent">Full audit.</span>
             </h2>
             <p className="text-text-secondary mb-8 leading-relaxed">
@@ -86,7 +86,7 @@ export function Integration() {
               endpoint validation with evidence on every finding.
             </p>
 
-            <div className="bg-bg-card border border-border-subtle rounded-lg p-6 mb-6">
+            <div className="card-surface card-interactive p-5 sm:p-6 mb-6">
               <div className="flex items-center gap-3 mb-4">
                 <IconX402 size={20} />
                 <span className="font-mono text-[13px] font-semibold">Free &amp; open source</span>
@@ -126,7 +126,7 @@ export function Integration() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden">
+            <div className="card-surface overflow-hidden">
               <div className="flex items-center gap-2 px-5 py-3 border-b border-border-subtle">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-text-muted/30" />

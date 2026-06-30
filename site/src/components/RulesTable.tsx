@@ -39,7 +39,7 @@ const rules: Rule[] = [
 
 export function RulesTable() {
   return (
-    <section id="rules" className="py-24 px-6">
+    <section id="rules" className="section-pad">
       <div className="max-w-5xl mx-auto">
         <m.div
           initial={{ opacity: 0, y: 15 }}
@@ -51,7 +51,7 @@ export function RulesTable() {
           <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
             RULE ENGINE
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-balance">
+          <h2 className="section-heading">
             <span className="text-accent">30+</span> rules across 6 categories
           </h2>
           <p className="mt-4 text-text-secondary max-w-xl mx-auto text-base">
@@ -64,9 +64,11 @@ export function RulesTable() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-bg-card border border-border-subtle rounded-lg overflow-hidden"
+          className="card-surface overflow-hidden"
         >
-          <div className="grid grid-cols-12 gap-4 px-5 py-3 border-b border-border-subtle font-mono text-[11px] text-text-muted tracking-wider">
+          <div className="overflow-x-auto">
+          <div className="min-w-[560px]">
+          <div className="grid grid-cols-12 gap-4 px-4 sm:px-5 py-3 border-b border-border-subtle font-mono text-[11px] text-text-muted tracking-wider">
             <div className="col-span-2">ID</div>
             <div className="col-span-2">SEVERITY</div>
             <div className="col-span-2">CATEGORY</div>
@@ -89,6 +91,8 @@ export function RulesTable() {
                 <div className="col-span-6 text-[13px] text-text-secondary">{rule.description}</div>
               </div>
             ))}
+          </div>
+          </div>
           </div>
         </m.div>
       </div>

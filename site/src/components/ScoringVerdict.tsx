@@ -26,7 +26,7 @@ const verdicts = [
 
 export function ScoringVerdict() {
   return (
-    <section id="scoring" className="py-24 px-6">
+    <section id="scoring" className="section-pad">
       <div className="max-w-5xl mx-auto">
         <m.div
           initial={{ opacity: 0, y: 15 }}
@@ -38,7 +38,7 @@ export function ScoringVerdict() {
           <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
             SCORING
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-balance">
+          <h2 className="section-heading">
             The rules decide the verdict.
           </h2>
           <p className="mt-4 text-text-secondary max-w-xl mx-auto text-base">
@@ -76,7 +76,7 @@ export function ScoringVerdict() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-bg-card border border-border-subtle rounded-lg p-7 text-center hover:border-text-muted/30 transition-colors"
+              className="card-surface card-interactive p-6 sm:p-7 text-center"
             >
               <div className={`font-mono text-3xl font-extrabold ${v.color} mb-2`}>{v.verdict}</div>
               <div className="font-mono text-[13px] text-text-muted mb-1">score {v.score}</div>

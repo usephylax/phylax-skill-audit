@@ -26,9 +26,9 @@ const principles = [
 
 export function TrustStrip() {
   return (
-    <section className="py-16 border-y border-border-subtle">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
+    <section className="py-12 sm:py-16 border-y border-border-subtle">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-8">
           {principles.map((p, i) => (
             <m.div
               key={p.title}

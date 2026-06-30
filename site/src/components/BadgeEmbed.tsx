@@ -27,7 +27,7 @@ const snippets = [
 
 export function BadgeEmbed() {
   return (
-    <section id="embed" className="py-24 px-6">
+    <section id="embed" className="section-pad">
       <div className="max-w-4xl mx-auto">
         <m.div
           initial={{ opacity: 0, y: 15 }}
@@ -39,7 +39,7 @@ export function BadgeEmbed() {
           <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
             EMBED &amp; API
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-balance">
+          <h2 className="section-heading">
             Drop a badge. <span className="text-accent">Get a verdict.</span>
           </h2>
           <p className="mt-4 text-text-secondary max-w-xl mx-auto text-base">
@@ -53,7 +53,7 @@ export function BadgeEmbed() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.5, delay: 0.05 }}
-          className="flex flex-col items-center gap-4 mb-10 p-6 bg-bg-card border border-border-subtle rounded-lg"
+          className="flex flex-col items-center gap-4 mb-10 p-5 sm:p-6 card-surface card-interactive"
         >
           <span className="font-mono text-[11px] text-text-muted">LIVE PREVIEW</span>
           <img

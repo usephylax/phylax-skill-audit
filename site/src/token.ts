@@ -4,6 +4,7 @@ export const TOKEN = {
   symbol: "PHYLAX",
   chain: "Base",
   chainId: 8453,
+  bankr: "https://bankr.bot/agents/phylax",
   basescan: "https://basescan.org/token/0xd7e608d398b88fe3084b495e9b86de2db343cba3",
   x: "https://x.com/usephylax",
 } as const;

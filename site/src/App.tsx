@@ -4,10 +4,8 @@ import { Hero } from "./components/Hero";
 import { TrustStrip } from "./components/TrustStrip";
 import { Engines } from "./components/Engines";
 import { RulesTable } from "./components/RulesTable";
-import { ScoringVerdict } from "./components/ScoringVerdict";
-import { ExampleOutput } from "./components/ExampleOutput";
-import { Integration } from "./components/Integration";
-import { BadgeEmbed } from "./components/BadgeEmbed";
+import { VerdictSection } from "./components/VerdictSection";
+import { DevelopersSection } from "./components/DevelopersSection";
 import { OfficialToken } from "./components/OfficialToken";
 import { FinalCta } from "./components/FinalCta";
 import { Footer } from "./components/Footer";
@@ -16,27 +14,28 @@ export default function App() {
   return (
     <LazyMotion features={domAnimation} strict>
       <div className="relative min-h-screen">
+        <div className="page-glow" />
         <div className="noise-overlay" />
         <div className="relative z-10">
           <Navbar />
-          <Hero />
-          <TrustStrip />
-          <div className="section-divider" />
-          <Engines />
-          <div className="section-divider" />
-          <RulesTable />
-          <div className="section-divider" />
-          <ScoringVerdict />
-          <div className="section-divider" />
-          <ExampleOutput />
-          <div className="section-divider" />
-          <Integration />
-          <div className="section-divider" />
-          <BadgeEmbed />
-          <div className="section-divider" />
-          <OfficialToken />
-          <div className="section-divider" />
-          <FinalCta />
+          <main>
+            <Hero />
+            <TrustStrip />
+
+            <div className="section-band">
+              <Engines />
+              <RulesTable />
+            </div>
+
+            <VerdictSection />
+
+            <div className="section-band">
+              <DevelopersSection />
+            </div>
+
+            <OfficialToken />
+            <FinalCta />
+          </main>
           <Footer />
         </div>
       </div>

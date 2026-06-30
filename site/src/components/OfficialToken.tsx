@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { m } from "framer-motion";
 import { IconShieldCheck, IconArrowRight } from "./Icons";
+import { SectionHeader } from "./SectionHeader";
 import { TOKEN } from "../token";
-import { fadeUp, springSoft } from "../motion";
+import { stagger } from "../motion";
 
 export function OfficialToken() {
   const [copied, setCopied] = useState(false);
@@ -19,86 +20,53 @@ export function OfficialToken() {
 
   return (
     <section id="token" className="section-pad">
-      <div className="max-w-3xl mx-auto">
-        <m.div {...fadeUp} className="text-center mb-8 md:mb-10">
-          <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-3 md:mb-4">
-            OFFICIAL TOKEN
-          </span>
-          <h2 className="section-heading">
-            One token. <span className="text-accent">Verify before you ape.</span>
-          </h2>
-          <p className="mt-3 md:mt-4 text-text-secondary max-w-xl mx-auto text-sm sm:text-base leading-relaxed px-1">
-            Only the address below is the official ${TOKEN.symbol} token. Anything else
-            claiming to be Phylax is not us — verify on Bankr before you trade.
-          </p>
-        </m.div>
+      <div className="page-container max-w-xl">
+        <SectionHeader
+          eyebrow="Official token"
+          title={
+            <>
+              Verify on <span className="text-accent">Bankr</span> before you trade
+            </>
+          }
+          description="Only the contract below is official $PHYLAX. Anything else is not us."
+        />
 
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ ...springSoft, delay: 0.08 }}
-          className="card-surface glow-border p-5 sm:p-7"
-        >
-          <div className="flex items-center gap-3 mb-5 flex-wrap">
-            <IconShieldCheck size={22} className="text-scan shrink-0" />
+        <m.div {...stagger(0)} className="card-surface card-interactive p-5 sm:p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <IconShieldCheck size={20} className="text-scan shrink-0" />
             <span className="font-mono text-sm font-semibold">
               ${TOKEN.symbol} · {TOKEN.chain}
             </span>
-            <span className="ml-auto font-mono text-[10px] sm:text-[11px] px-2.5 py-1 rounded-md border text-emerald-400 border-emerald-500/30 bg-emerald-500/10 tracking-wide">
+            <span className="ml-auto font-mono text-[10px] px-2 py-0.5 rounded-md verdict-allow tracking-wide">
               VERIFIED
             </span>
           </div>
 
-          <div className="font-mono text-[11px] text-text-muted mb-2 tracking-wide">
-            CONTRACT ADDRESS
-          </div>
-          <div className="flex flex-col gap-2 bg-bg-elevated border border-border-subtle rounded-lg px-3 sm:px-4 py-3 mb-5">
-            <code className="font-mono text-[12px] sm:text-[13px] text-text-primary break-all leading-relaxed">
+          <p className="section-eyebrow !text-text-muted !normal-case !tracking-wide mb-2">
+            Contract address
+          </p>
+          <div className="bg-bg-elevated/80 border border-border-subtle rounded-lg px-4 py-3 mb-5">
+            <code className="font-mono text-[12px] sm:text-[13px] break-all leading-relaxed block">
               {TOKEN.address}
             </code>
             <button
               type="button"
               onClick={copyAddress}
-              className="self-start sm:self-end px-3 py-1.5 font-mono text-[11px] border border-border-subtle rounded-md text-text-secondary hover:text-text-primary hover:border-accent/30 transition-all duration-300 active:scale-95"
+              className="mt-2 text-[11px] font-mono text-text-muted hover:text-accent transition-colors"
             >
               {copied ? "Copied ✓" : "Copy address"}
             </button>
           </div>
 
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:gap-3">
-            <a
-              href={TOKEN.bankr}
-              target="_blank"
-              rel="noopener"
-              className="btn-primary w-full sm:flex-1"
-            >
+          <div className="grid sm:grid-cols-2 gap-2.5">
+            <a href={TOKEN.bankr} target="_blank" rel="noopener" className="btn-primary">
               View on Bankr
               <IconArrowRight size={16} />
             </a>
-            <a
-              href={TOKEN.x}
-              target="_blank"
-              rel="noopener"
-              className="btn-ghost w-full sm:flex-1"
-            >
+            <a href={TOKEN.x} target="_blank" rel="noopener" className="btn-ghost">
               Confirm on X
             </a>
           </div>
-
-          <p className="mt-5 text-[11px] sm:text-[12px] text-text-muted leading-relaxed text-center sm:text-left">
-            Trading fees support Phylax development. Always cross-check this contract against
-            our{" "}
-            <a
-              href={TOKEN.bankr}
-              target="_blank"
-              rel="noopener"
-              className="text-text-secondary hover:text-accent transition-colors"
-            >
-              Bankr agent profile
-            </a>{" "}
-            and pinned post on X before you trade.
-          </p>
         </m.div>
       </div>
     </section>

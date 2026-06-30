@@ -1,101 +1,69 @@
 import { m } from "framer-motion";
 import { IconStaticScan, IconOnchainScan, IconEndpointScan } from "./Icons";
+import { SectionHeader } from "./SectionHeader";
+import { stagger } from "../motion";
 
 const engines = [
   {
     icon: IconStaticScan,
-    title: "Static Scan",
-    desc: "Line-by-line regex scan of SKILL.md and manifest files. Detects injection prompts, secret exfiltration, hidden transfer instructions, and zero-width character obfuscation.",
-    tags: ["PI-001", "SEC-001", "MAN-002"],
+    title: "Static",
+    desc: "SKILL.md & manifest — injection, secret exfiltration, obfuscation.",
+    tags: ["PI-*", "SEC-*", "MAN-*"],
   },
   {
     icon: IconOnchainScan,
-    title: "Onchain Scan",
-    desc: "Fetches bytecode from Base (8453) via eth_getCode. Matches function selectors, detects proxy patterns, unverified contracts, honeypot signatures, and hidden mint capabilities.",
-    tags: ["CON-020", "CON-012", "CON-011"],
+    title: "Onchain",
+    desc: "Bytecode on Base — approvals, proxies, honeypot simulation.",
+    tags: ["CON-*", "LIQ-*"],
   },
   {
     icon: IconEndpointScan,
-    title: "Endpoint Scan",
-    desc: "Probes declared x402 payment endpoints. Validates HTTPS enforcement, 402 schema compliance, redirect chains, server errors, and price sanity against market medians.",
-    tags: ["X402-001", "X402-041", "X402-030"],
+    title: "Endpoint",
+    desc: "x402 payment URLs — HTTPS, schema, redirects, price sanity.",
+    tags: ["X402-*"],
   },
 ];
 
 export function Engines() {
   return (
-    <section id="engines" className="section-pad">
-      <div className="max-w-6xl mx-auto">
-        <m.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="inline-block font-mono text-[11px] text-text-muted tracking-wider mb-4">
-            SCAN ENGINES
-          </span>
-          <h2 className="section-heading">
-            Three engines. <span className="text-accent">One verdict.</span>
-          </h2>
-          <p className="mt-4 text-text-secondary max-w-xl mx-auto text-base">
-            Each scanner runs independently. Findings merge, deduplicate, and feed into a single deterministic score.
-          </p>
-        </m.div>
+    <section id="engines" className="section-pad !pb-8 md:!pb-12">
+      <div className="page-container">
+        <SectionHeader
+          eyebrow="Scan engines"
+          title={
+            <>
+              Three layers. <span className="text-accent">One verdict.</span>
+            </>
+          }
+          description="Independent scanners merge findings into a single deterministic score."
+        />
 
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-3 gap-4">
           {engines.map((eng, i) => (
-            <m.div
+            <m.article
               key={eng.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="card-surface card-interactive p-5 sm:p-6"
+              {...stagger(i)}
+              className="card-surface card-interactive p-5"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 border border-border-subtle rounded">
-                  <eng.icon size={20} />
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg border border-border-subtle bg-bg-elevated/50">
+                  <eng.icon size={18} />
                 </div>
-                <h3 className="font-mono text-[13px] font-bold tracking-wide uppercase">
+                <h3 className="font-mono text-xs font-bold tracking-widest uppercase text-text-primary">
                   {eng.title}
                 </h3>
               </div>
-
-              <p className="text-sm text-text-secondary leading-relaxed mb-5">
-                {eng.desc}
-              </p>
-
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-border-subtle">
+              <p className="text-[13px] text-text-secondary leading-relaxed mb-4">{eng.desc}</p>
+              <div className="flex flex-wrap gap-1.5">
                 {eng.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="font-mono text-[11px] px-2 py-0.5 bg-bg-elevated border border-border-subtle text-text-muted rounded"
-                  >
+                  <span key={tag} className="tag-pill">
                     {tag}
                   </span>
                 ))}
               </div>
-            </m.div>
+            </m.article>
           ))}
         </div>
-
-        <m.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex justify-center mt-12"
-        >
-          <div className="flex items-center gap-3 font-mono text-xs text-text-muted">
-            <span>merge</span>
-            <span className="text-border-subtle">→</span>
-            <span>deduplicate</span>
-            <span className="text-border-subtle">→</span>
-            <span className="text-accent font-bold">score</span>
-          </div>
-        </m.div>
       </div>
     </section>
   );

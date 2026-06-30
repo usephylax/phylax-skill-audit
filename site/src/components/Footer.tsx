@@ -5,21 +5,20 @@ const LINKS = [
   { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
   { label: "npm", href: "https://www.npmjs.com/package/phylax-skill-audit" },
   { label: "Bankr", href: TOKEN.bankr },
-  { label: "Badge", href: "#embed" },
-  { label: "Basescan", href: TOKEN.basescan },
+  { label: "API", href: "#integration" },
 ] as const;
 
 export function Footer() {
   return (
-    <footer className="border-t border-border-subtle pb-[env(safe-area-inset-bottom)]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2.5">
-            <PhylaxLogo size={20} />
-            <span className="font-mono font-semibold text-[13px] text-text-secondary">phylax</span>
+    <footer className="border-t border-border-faint pb-[env(safe-area-inset-bottom)]">
+      <div className="page-container py-8 sm:py-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5">
+          <div className="flex items-center gap-2">
+            <PhylaxLogo size={18} />
+            <span className="font-mono text-[12px] text-text-secondary">phylax</span>
           </div>
 
-          <div className="flex items-center gap-6 text-[13px] text-text-muted font-mono flex-wrap justify-center">
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] font-mono text-text-muted">
             {LINKS.map((link) => (
               <a
                 key={link.label}
@@ -31,16 +30,11 @@ export function Footer() {
                 {link.label}
               </a>
             ))}
-          </div>
+          </nav>
 
-          <div className="text-center md:text-right">
-            <div className="text-[11px] text-text-muted font-mono">
-              Official ${TOKEN.symbol} · {shortenAddress(TOKEN.address, 8, 6)}
-            </div>
-            <div className="text-[11px] text-text-muted font-mono mt-1">
-              © {new Date().getFullYear()} Phylax · Pre-install security for agent skills
-            </div>
-          </div>
+          <p className="text-[11px] text-text-muted font-mono text-center sm:text-right">
+            ${TOKEN.symbol} {shortenAddress(TOKEN.address, 6, 4)}
+          </p>
         </div>
       </div>
     </footer>

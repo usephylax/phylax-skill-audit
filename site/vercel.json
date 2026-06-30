@@ -4,6 +4,12 @@
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/**/*.ts": {
+      "includeFiles": "node_modules/phylax-skill-audit/rules/**",
+      "maxDuration": 30
+    }
+  },
   "redirects": [
     {
       "source": "/",

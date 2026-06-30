@@ -16,10 +16,10 @@ Your output is a deterministic verdict derived ONLY from rule hits, not opinion.
 - `mode`: fast (static) | deep (+ onchain simulation)
 
 ## Procedure
-1. Static scan: prompt-injection (PI-*), secret requests (SEC-*), manifest integrity (MAN-*).
+1. Static scan: prompt-injection (PI-*), secret requests (SEC-*), manifest JSON (MAN-001–003 when `manifest` is provided), SKILL.md frontmatter (MAN-004).
 2. Onchain scan of each contract: approvals (CON-01x), owner/upgradeability (CON-011),
    honeypot simulation in deep mode (CON-020), liquidity/holder concentration (LIQ-*).
-3. Endpoint checks: x402 schema, receipt verification, price-sanity (X402-*).
+3. Endpoint checks: x402 schema, receipt verification, price-sanity (X402-*). Unsafe URLs are skipped.
 4. Score = 100 − Σ(severity_weight × hits). Any Critical ⇒ DENY.
 5. Emit JSON: { skill, verdict, score, findings[], summary, ttl }.
 

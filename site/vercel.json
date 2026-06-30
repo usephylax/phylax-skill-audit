@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm --prefix .. ci && npm --prefix .. run build && npm ci && npm install file:.. && npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist/client",
   "framework": null,
   "cleanUrls": true,

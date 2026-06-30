@@ -116,6 +116,19 @@ Content-Type: application/json
 Returns the same `AuditOutput` JSON (`verdict`, `score`, `findings`, `summary`, `ttl`).
 Rate-limited to 20 requests/min per IP. `GET /api/audit` returns a self-describing usage doc.
 
+**Security (v0.2.2+):** the hosted API blocks SSRF targets (localhost, private IPs, cloud metadata),
+requires HTTPS for remote fetches, rejects local file paths as `skill_source`, and validates
+redirect chains on endpoint probes.
+
+## Audit modes
+
+| Mode | What it does |
+|------|----------------|
+| `fast` | Static SKILL.md scan + bytecode heuristics + endpoint HEAD probes |
+| `deep` | Everything in `fast`, plus honeypot `transfer` simulation via public Base RPC |
+
+Use `fast` for CI and quick checks. Use `deep` when a skill references live token contracts.
+
 ## Scoring
 
 ```
@@ -163,6 +176,7 @@ phylax-skill-audit/
 │   ├── extractors.ts     # Auto-extract addresses/URLs
 │   ├── rules.ts          # YAML rule loader
 │   ├── scoring.ts        # Score + verdict logic
+│   ├── urlSafety.ts      # SSRF guards for outbound fetches
 │   └── scanner/
 │       ├── static.ts     # Static regex scanner
 │       ├── onchain.ts    # Onchain bytecode + simulation

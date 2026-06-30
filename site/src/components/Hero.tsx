@@ -1,5 +1,6 @@
 import { m } from "framer-motion";
 import { PhylaxLogo, IconArrowRight } from "./Icons";
+import { TOKEN, shortenAddress } from "../token";
 
 function AuditConsole() {
   return (
@@ -60,10 +61,10 @@ function AuditConsole() {
             </span>
             <span className="text-text-muted">│</span>
             <span className="text-text-secondary">score:</span>
-            <span className="text-accent font-bold">97</span>
+            <span className="text-accent font-bold">100</span>
             <span className="text-text-muted">│</span>
             <span className="text-text-secondary">findings:</span>
-            <span>1 low</span>
+            <span>0</span>
           </m.div>
 
           <div className="mt-3 flex items-center gap-2">
@@ -112,6 +113,21 @@ export function Hero() {
           Phylax scans SKILL.md, manifests, onchain contracts, and x402
           endpoints — then returns deterministic verdicts with evidence.
         </m.p>
+
+        <m.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="mt-6"
+        >
+          <a
+            href="#token"
+            className="inline-flex items-center gap-2 px-3 py-1.5 border border-emerald-500/25 bg-emerald-500/5 rounded font-mono text-[11px] text-emerald-400/90 hover:border-emerald-500/40 transition-colors"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot" />
+            Official ${TOKEN.symbol} · {shortenAddress(TOKEN.address)} · Verify CA
+          </a>
+        </m.div>
 
         <m.div
           initial={{ opacity: 0, y: 15 }}

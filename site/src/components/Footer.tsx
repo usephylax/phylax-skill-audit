@@ -1,4 +1,12 @@
 import { PhylaxLogo } from "./Icons";
+import { TOKEN, shortenAddress } from "../token";
+
+const LINKS = [
+  { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
+  { label: "npm", href: "https://www.npmjs.com/package/phylax-skill-audit" },
+  { label: "Token", href: "#token" },
+  { label: "Basescan", href: TOKEN.basescan },
+] as const;
 
 export function Footer() {
   return (
@@ -10,16 +18,27 @@ export function Footer() {
             <span className="font-mono font-semibold text-[13px] text-text-secondary">phylax</span>
           </div>
 
-          <div className="flex items-center gap-6 text-[13px] text-text-muted font-mono">
-            {["GitHub", "npm", "Docs", "Base Chain"].map((link) => (
-              <a key={link} href="#" className="hover:text-text-secondary transition-colors">
-                {link}
+          <div className="flex items-center gap-6 text-[13px] text-text-muted font-mono flex-wrap justify-center">
+            {LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
+                rel={link.href.startsWith("http") ? "noopener" : undefined}
+                className="hover:text-text-secondary transition-colors"
+              >
+                {link.label}
               </a>
             ))}
           </div>
 
-          <div className="text-[11px] text-text-muted font-mono">
-            © {new Date().getFullYear()} Phylax · Pre-install security for agent skills
+          <div className="text-center md:text-right">
+            <div className="text-[11px] text-text-muted font-mono">
+              Official ${TOKEN.symbol} · {shortenAddress(TOKEN.address, 8, 6)}
+            </div>
+            <div className="text-[11px] text-text-muted font-mono mt-1">
+              © {new Date().getFullYear()} Phylax · Pre-install security for agent skills
+            </div>
           </div>
         </div>
       </div>

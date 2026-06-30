@@ -19,5 +19,9 @@ site/.vercel/
 *.tgz
 .tmp-*/
 
+# Editor / local tooling (not part of the project)
+.vscode/
+.kiro/
+
 # Private security report — DO NOT commit (responsible disclosure)
 AEON-SECURITY-REPORT.md

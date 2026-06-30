@@ -24,8 +24,6 @@ audits referenced contracts (unlimited approvals, upgradeable owner, honeypot),
 and validates x402 endpoints. Returns a **deterministic** risk verdict
 (`ALLOW` / `WARN` / `DENY`) with evidence.
 
-> **Demo:** [`assets/phylax-demo.mp4`](assets/phylax-demo.mp4) — a 15s walkthrough of the CLI flagging a honeypot skill.
-
 ## Use it
 
 Four ways, all live:

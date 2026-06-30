@@ -1,8 +1,14 @@
 // api/_lib.ts — shared helpers for the Phylax HTTP API (not a route; underscore-prefixed).
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { productionFetchPolicy, validateFetchUrl } from "phylax-skill-audit";
 
 export const ALLOWED_MODES = new Set(["fast", "deep"]);
 export const MAX_BODY_BYTES = 256 * 1024;
+export const MAX_SKILL_SOURCE_LEN = 2048;
+export const MAX_ENDPOINTS = 20;
+export const MAX_CONTRACTS = 50;
+
+const FETCH_POLICY = { ...productionFetchPolicy(), httpsOnly: true };
 
 // ── CORS ────────────────────────────────────────────────────────────────────
 export function cors(res: VercelResponse) {
@@ -43,20 +49,74 @@ export function rateLimited(ip: string) {
 // or "owner/repo/path/to/SKILL.md". Returns a best-guess raw.githubusercontent URL.
 export function resolveSkillUrl(ref: string): string {
   const s = ref.trim();
-  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  if (s.startsWith("http://") || s.startsWith("https://")) {
+    return validateFetchUrl(s, FETCH_POLICY);
+  }
 
   // strip a leading github.com/ if present
   const cleaned = s.replace(/^github\.com\//, "");
   const parts = cleaned.split("/").filter(Boolean);
-  if (parts.length < 2) return s; // can't resolve; let audit() handle/fail
+  if (parts.length < 2) {
+    throw new Error("skill ref must be owner/repo or a public https URL");
+  }
 
   const [owner, repo, ...rest] = parts;
   const base = `https://raw.githubusercontent.com/${owner}/${repo}/HEAD`;
-  if (rest.length === 0) return `${base}/SKILL.md`;
-  if (rest[rest.length - 1].toLowerCase().endsWith(".md")) return `${base}/${rest.join("/")}`;
-  // treat as a skill directory (with or without a leading "skills/")
-  const dir = rest[0] === "skills" ? rest.join("/") : `skills/${rest.join("/")}`;
-  return `${base}/${dir}/SKILL.md`;
+  let url: string;
+  if (rest.length === 0) url = `${base}/SKILL.md`;
+  else if (rest[rest.length - 1].toLowerCase().endsWith(".md")) url = `${base}/${rest.join("/")}`;
+  else {
+    const dir = rest[0] === "skills" ? rest.join("/") : `skills/${rest.join("/")}`;
+    url = `${base}/${dir}/SKILL.md`;
+  }
+  return validateFetchUrl(url, FETCH_POLICY);
+}
+
+function isInlineSkillMarkdown(source: string): boolean {
+  return source.startsWith("---") || source.startsWith("# ");
+}
+
+/**
+ * Validate skill_source for the HTTP API. Blocks local file paths and SSRF targets.
+ */
+export function validateSkillSource(skillSource: string, skillMd?: string): string {
+  const source = skillSource.trim();
+  if (!source) throw new Error("skill_source is required");
+  if (source.length > MAX_SKILL_SOURCE_LEN) {
+    throw new Error(`skill_source exceeds ${MAX_SKILL_SOURCE_LEN} characters`);
+  }
+  if (skillMd) return source;
+  if (isInlineSkillMarkdown(source)) return source;
+  if (source.startsWith("http://") || source.startsWith("https://")) {
+    return validateFetchUrl(source, FETCH_POLICY);
+  }
+  return resolveSkillUrl(source);
+}
+
+export function validateEndpointList(endpoints: unknown): string[] {
+  if (!Array.isArray(endpoints)) throw new Error("endpoints must be an array");
+  if (endpoints.length > MAX_ENDPOINTS) {
+    throw new Error(`endpoints exceeds max of ${MAX_ENDPOINTS}`);
+  }
+  return endpoints.map((ep, i) => {
+    if (typeof ep !== "string" || !ep.trim()) {
+      throw new Error(`endpoints[${i}] must be a non-empty string`);
+    }
+    return validateFetchUrl(ep.trim(), FETCH_POLICY);
+  });
+}
+
+export function validateContractList(contracts: unknown): string[] {
+  if (!Array.isArray(contracts)) throw new Error("contracts must be an array");
+  if (contracts.length > MAX_CONTRACTS) {
+    throw new Error(`contracts exceeds max of ${MAX_CONTRACTS}`);
+  }
+  return contracts.map((c, i) => {
+    if (typeof c !== "string" || !c.trim()) {
+      throw new Error(`contracts[${i}] must be a non-empty string`);
+    }
+    return c.trim();
+  });
 }
 
 // ── In-memory verdict cache (TTL 24h, matches verdict TTL) ───────────────────

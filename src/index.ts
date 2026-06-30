@@ -16,6 +16,7 @@ import { runStaticScan, runManifestScan, runFrontmatterScan } from "./scanner/st
 import { runOnchainScan } from "./scanner/onchain.js";
 import { runEndpointScan } from "./scanner/endpoint.js";
 import { calculateScore, deriveVerdict, generateSummary } from "./scoring.js";
+import { productionFetchPolicy, validateFetchUrl } from "./urlSafety.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_RULES_DIR = resolve(__dirname, "..", "rules");
@@ -127,7 +128,8 @@ async function fetchSkillMd(source: string): Promise<string | null> {
   // If it looks like a URL, fetch it
   if (source.startsWith("http://") || source.startsWith("https://")) {
     try {
-      const resp = await fetch(source, { signal: AbortSignal.timeout(15_000) });
+      const safeUrl = validateFetchUrl(source, productionFetchPolicy());
+      const resp = await fetch(safeUrl, { signal: AbortSignal.timeout(15_000) });
       if (!resp.ok) return null;
       return await resp.text();
     } catch {
@@ -192,3 +194,5 @@ function makeErrorOutput(skillSource: string, message: string): AuditOutput {
 export type { AuditInput, AuditOutput, Finding, Verdict, Mode, Rule } from "./types.js";
 export { calculateScore, deriveVerdict, generateSummary } from "./scoring.js";
 export { loadRules } from "./rules.js";
+export { validateFetchUrl, isSafeFetchUrl, productionFetchPolicy } from "./urlSafety.js";
+export type { FetchUrlPolicy } from "./urlSafety.js";

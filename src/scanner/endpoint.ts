@@ -5,6 +5,7 @@
  */
 
 import type { Finding, Rule, ScanResult } from "../types.js";
+import { productionFetchPolicy, validateFetchUrl } from "../urlSafety.js";
 
 /**
  * Run endpoint checks on a list of URLs.
@@ -18,6 +19,11 @@ export async function runEndpointScan(
   const findings: Finding[] = [];
 
   for (const url of endpoints) {
+    try {
+      validateFetchUrl(url, productionFetchPolicy());
+    } catch {
+      continue; // skip unsafe URLs silently (SSRF guard)
+    }
     const urlFindings = await checkEndpoint(url, rules, allSkillPrices);
     findings.push(...urlFindings);
   }
@@ -54,8 +60,8 @@ async function checkEndpoint(
   let finalUrl = url;
 
   try {
-    // Manual redirect counting
-    const probe = await fetchWithRedirectCount(url, 5);
+    const safeUrl = validateFetchUrl(url, productionFetchPolicy());
+    const probe = await fetchWithRedirectCount(safeUrl, 5);
     resp = probe.response;
     redirectCount = probe.redirectCount;
     finalUrl = probe.finalUrl;
@@ -170,7 +176,8 @@ async function fetchWithRedirectCount(
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get("location");
       if (!location) break;
-      currentUrl = new URL(location, currentUrl).toString();
+      const nextUrl = new URL(location, currentUrl).toString();
+      currentUrl = validateFetchUrl(nextUrl, productionFetchPolicy());
       redirectCount++;
     } else {
       break;

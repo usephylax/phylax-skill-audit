@@ -10,7 +10,7 @@ import { audit, type AuditInput } from "phylax-skill-audit";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   cors, clientIp, rateLimited, resolveSkillUrl, cacheGet, cacheSet,
-  ALLOWED_MODES, MAX_BODY_BYTES,
+  ALLOWED_MODES, MAX_BODY_BYTES, validateSkillSource, validateEndpointList, validateContractList,
 } from "./_lib.js";
 
 function applyRate(req: VercelRequest, res: VercelResponse): boolean {
@@ -62,7 +62,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.setHeader("X-Cache", "MISS");
       res.status(200).json(result);
     } catch (err) {
-      res.status(500).json({ error: "Audit failed.", detail: err instanceof Error ? err.message : String(err) });
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("Blocked") || msg.includes("HTTPS") || msg.includes("Invalid URL") || msg.includes("skill ref")) {
+        res.status(400).json({ error: "Invalid skill reference.", detail: msg });
+        return;
+      }
+      res.status(500).json({ error: "Audit failed.", detail: msg });
     }
     return;
   }
@@ -113,12 +118,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
+  let safeSource: string;
+  let safeEndpoints: string[] | undefined;
+  let safeContracts: string[] | undefined;
+
+  try {
+    safeSource = validateSkillSource(
+      skill_source,
+      typeof skill_md === "string" ? skill_md : undefined
+    );
+    if (endpoints !== undefined) safeEndpoints = validateEndpointList(endpoints);
+    if (contracts !== undefined) safeContracts = validateContractList(contracts);
+  } catch (err) {
+    res.status(400).json({
+      error: "Invalid request.",
+      detail: err instanceof Error ? err.message : String(err),
+    });
+    return;
+  }
+
   const input: AuditInput = {
-    skill_source,
+    skill_source: safeSource,
     skill_md: typeof skill_md === "string" ? skill_md : undefined,
     manifest: typeof manifest === "string" ? manifest : undefined,
-    contracts: contracts as string[] | undefined,
-    endpoints: endpoints as string[] | undefined,
+    contracts: safeContracts,
+    endpoints: safeEndpoints,
     chain_id: typeof chain_id === "number" ? chain_id : undefined,
     mode: mode === "deep" ? "deep" : "fast",
   };

@@ -56,7 +56,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     let result = cacheGet(cacheKey) as { verdict: string; score: number } | null;
     if (!result) {
-      result = (await audit({ skill_source: resolveSkillUrl(skill), mode })) as { verdict: string; score: number };
+      const url = resolveSkillUrl(skill);
+      result = (await audit({ skill_source: url, mode })) as { verdict: string; score: number };
       cacheSet(cacheKey, result);
     }
     const color = COLORS[result.verdict] || COLORS.ERROR;

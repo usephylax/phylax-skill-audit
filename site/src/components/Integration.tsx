@@ -81,9 +81,9 @@ export function Integration() {
               One function call. <span className="text-accent">Full audit.</span>
             </h2>
             <p className="text-text-secondary mb-8 leading-relaxed">
-              Import the audit function, pass your skill source and chain config.
-              Get back a deterministic verdict with evidence in milliseconds — or
-              call the hosted HTTP API at <span className="font-mono text-text-primary">POST /api/audit</span>.
+              Install from npm, import the audit function, or call the hosted HTTP API.
+              Same deterministic engine everywhere — static scan, onchain checks, and x402
+              endpoint validation with evidence on every finding.
             </p>
 
             <div className="bg-bg-card border border-border-subtle rounded-lg p-6 mb-6">
@@ -100,7 +100,7 @@ export function Integration() {
                   Run it locally, in CI, or call the hosted API. No key required.
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {["Base chain (8453)", "Deterministic", "x402 pricing — soon"].map((tag) => (
+                  {["npm v0.2.2", "Base (8453)", "MIT · free", "SSRF-hardened API"].map((tag) => (
                     <span key={tag} className="px-2.5 py-1 bg-bg-elevated border border-border-subtle rounded font-mono text-[11px] text-text-muted">
                       {tag}
                     </span>

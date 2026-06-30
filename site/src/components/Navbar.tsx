@@ -1,6 +1,15 @@
 import { m } from "framer-motion";
 import { PhylaxLogo, IconShieldCheck, IconTerminal } from "./Icons";
 
+const NAV = [
+  { label: "Engines", href: "#engines" },
+  { label: "Rules", href: "#rules" },
+  { label: "Scoring", href: "#scoring" },
+  { label: "Embed", href: "#embed" },
+  { label: "Token", href: "#token" },
+  { label: "Integrate", href: "#integration" },
+] as const;
+
 export function Navbar() {
   return (
     <m.nav
@@ -18,13 +27,13 @@ export function Navbar() {
         </a>
 
         <div className="hidden md:flex items-center gap-1">
-          {["Engines", "Rules", "Scoring", "Token", "Integrate"].map((item) => (
+          {NAV.map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.label}
+              href={item.href}
               className="px-3 py-1.5 text-[13px] text-text-secondary hover:text-text-primary transition-colors"
             >
-              {item}
+              {item.label}
             </a>
           ))}
         </div>

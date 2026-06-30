@@ -4,7 +4,8 @@ import { TOKEN, shortenAddress } from "../token";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
   { label: "npm", href: "https://www.npmjs.com/package/phylax-skill-audit" },
-  { label: "Token", href: "#token" },
+  { label: "Bankr", href: "https://bankr.bot/agents/phylax" },
+  { label: "Badge", href: "#embed" },
   { label: "Basescan", href: TOKEN.basescan },
 ] as const;
 

@@ -36,7 +36,10 @@ export function FinalCta() {
           </a>
 
           <p className="mt-6 text-[12px] text-text-muted font-mono">
-            MIT License · Open Source · Base Chain Native
+            phylax-skill-audit@0.2.2 · MIT · Base ·{" "}
+            <a href="https://bankr.bot/agents/phylax" className="text-text-secondary hover:text-accent transition-colors">
+              Bankr profile
+            </a>
           </p>
         </m.div>
       </div>

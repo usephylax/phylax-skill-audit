@@ -22,6 +22,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "cli": "node dist/cli.js",
+    "bankr:sync": "node scripts/bankr-sync-profile.mjs",
     "prepublishOnly": "npm run build && npm test"
   },
   "repository": {

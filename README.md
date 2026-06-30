@@ -120,6 +120,17 @@ Rate-limited to 20 requests/min per IP. `GET /api/audit` returns a self-describi
 requires HTTPS for remote fetches, rejects local file paths as `skill_source`, and validates
 redirect chains on endpoint probes.
 
+### Verdict badge (embed)
+
+```html
+<img src="https://usephylax.com/api/badge?skill=owner/repo" alt="Phylax verdict" />
+```
+
+```bash
+GET https://usephylax.com/api/badge?skill=owner/repo&mode=fast
+# → SVG image: "phylax | ALLOW 97"
+```
+
 ## Audit modes
 
 | Mode | What it does |

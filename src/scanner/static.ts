@@ -119,7 +119,8 @@ export function runStaticScan(text: string, rules: Rule[]): ScanResult {
 }
 
 /**
- * Scan manifest JSON for structural issues (MAN-* rules).
+ * Scan catalog.json / skills.json for structural issues (MAN-001..003).
+ * Only call this with actual JSON manifest text — not SKILL.md.
  */
 export function runManifestScan(manifestJson: string, rules: Rule[]): ScanResult {
   const findings: Finding[] = [];
@@ -127,7 +128,6 @@ export function runManifestScan(manifestJson: string, rules: Rule[]): ScanResult
   for (const rule of rules) {
     switch (rule.id) {
       case "MAN-002": {
-        // Try parsing JSON
         try {
           JSON.parse(manifestJson);
         } catch {
@@ -141,7 +141,6 @@ export function runManifestScan(manifestJson: string, rules: Rule[]): ScanResult
         break;
       }
       case "MAN-001": {
-        // Check required fields
         try {
           const obj = JSON.parse(manifestJson);
           const missing: string[] = [];
@@ -165,28 +164,38 @@ export function runManifestScan(manifestJson: string, rules: Rule[]): ScanResult
         // Slug vs folder name — requires external context, skip in pure static
         break;
       }
-      case "MAN-004": {
-        // Check frontmatter name/description empty
-        const nameMatch = manifestJson.match(/^name:\s*$/m);
-        const descMatch = manifestJson.match(/^description:\s*$/m);
-        if (nameMatch) {
-          findings.push({
-            id: rule.id,
-            severity: rule.severity,
-            evidence: "frontmatter 'name' field is empty",
-            ref: "SKILL.md#frontmatter",
-          });
-        }
-        if (descMatch) {
-          findings.push({
-            id: rule.id,
-            severity: rule.severity,
-            evidence: "frontmatter 'description' field is empty",
-            ref: "SKILL.md#frontmatter",
-          });
-        }
-        break;
-      }
+    }
+  }
+
+  return { findings };
+}
+
+/**
+ * Scan SKILL.md YAML frontmatter for empty name/description (MAN-004).
+ */
+export function runFrontmatterScan(skillMd: string, rules: Rule[]): ScanResult {
+  const findings: Finding[] = [];
+
+  for (const rule of rules) {
+    if (rule.id !== "MAN-004") continue;
+
+    const nameMatch = skillMd.match(/^name:\s*$/m);
+    const descMatch = skillMd.match(/^description:\s*$/m);
+    if (nameMatch) {
+      findings.push({
+        id: rule.id,
+        severity: rule.severity,
+        evidence: "frontmatter 'name' field is empty",
+        ref: "SKILL.md#frontmatter",
+      });
+    }
+    if (descMatch) {
+      findings.push({
+        id: rule.id,
+        severity: rule.severity,
+        evidence: "frontmatter 'description' field is empty",
+        ref: "SKILL.md#frontmatter",
+      });
     }
   }
 

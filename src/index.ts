@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import type { AuditInput, AuditOutput, Finding, Rule, Mode } from "./types.js";
 import { loadRules, rulesByCategory } from "./rules.js";
 import { extractAddresses, extractUrls, buildContractDescriptors } from "./extractors.js";
-import { runStaticScan, runManifestScan } from "./scanner/static.js";
+import { runStaticScan, runManifestScan, runFrontmatterScan } from "./scanner/static.js";
 import { runOnchainScan } from "./scanner/onchain.js";
 import { runEndpointScan } from "./scanner/endpoint.js";
 import { calculateScore, deriveVerdict, generateSummary } from "./scoring.js";
@@ -74,8 +74,7 @@ export async function audit(input: AuditInput): Promise<AuditOutput> {
     const manResult = runManifestScan(input.manifest, manRules);
     allFindings.push(...manResult.findings);
   }
-  // Also scan SKILL.md frontmatter for MAN-004
-  const manFrontmatterResult = runManifestScan(skillMd, manRules);
+  const manFrontmatterResult = runFrontmatterScan(skillMd, manRules);
   allFindings.push(...manFrontmatterResult.findings);
 
   // ── Scanner B: Onchain ─────────────────────────────────────────────────

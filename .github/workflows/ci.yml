@@ -59,9 +59,11 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@54
 
-      - name: Pull Vercel settings
+      - name: Link Vercel project
         working-directory: site
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          mkdir -p .vercel
+          printf '%s\n' '{"projectId":"prj_IXqZJeV2j11eNwukrB50qKUZBRlE","orgId":"team_ucWusvgR1wz5RZDAEjhRrbHw"}' > .vercel/project.json
 
       - name: Build for Vercel
         working-directory: site

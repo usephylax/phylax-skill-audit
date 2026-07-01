@@ -1,19 +1,19 @@
 /**
  * Bankr x402 Cloud handler — proxies deep audits to Vercel (rules + RPC infra).
- * Payment collected by x402; engine runs on usephylax.com via internal key.
  */
 
 const AUDIT_API = "https://usephylax.com/api/audit";
 const MAX_BODY_BYTES = 256 * 1024;
 
-function jsonError(status: number, error: string, detail?: string): Response {
-  return new Response(JSON.stringify({ error, ...(detail ? { detail } : {}) }), {
-    status,
-    headers: { "Content-Type": "application/json" },
-  });
+function byteLength(text: string): number {
+  return new TextEncoder().encode(text).length;
 }
 
-export default async function handler(req: Request) {
+function jsonError(status: number, error: string, detail?: string): Response {
+  return Response.json({ error, ...(detail ? { detail } : {}) }, { status });
+}
+
+export default async function handler(req: Request): Promise<Response> {
   if (req.method !== "POST") {
     return jsonError(405, "Method not allowed. Use POST with JSON body.");
   }
@@ -23,8 +23,14 @@ export default async function handler(req: Request) {
     return jsonError(500, "Server misconfigured.", "PHYLAX_INTERNAL_AUDIT_KEY not set.");
   }
 
-  const raw = await req.text();
-  if (Buffer.byteLength(raw, "utf8") > MAX_BODY_BYTES) {
+  let raw: string;
+  try {
+    raw = await req.text();
+  } catch (err) {
+    return jsonError(400, "Could not read body.", err instanceof Error ? err.message : String(err));
+  }
+
+  if (byteLength(raw) > MAX_BODY_BYTES) {
     return jsonError(413, "Payload too large (max 256KB).");
   }
 
@@ -45,34 +51,36 @@ export default async function handler(req: Request) {
 
   body.mode = "deep";
 
-  const upstream = await fetch(AUDIT_API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-phylax-internal-key": key,
-    },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(55_000),
-  });
-
-  let result: unknown;
+  let upstream: Response;
   try {
-    result = await upstream.json();
+    upstream = await fetch(AUDIT_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-phylax-internal-key": key,
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    return jsonError(502, "Upstream audit unreachable.", err instanceof Error ? err.message : String(err));
+  }
+
+  const text = await upstream.text();
+  let result: Record<string, unknown>;
+  try {
+    result = JSON.parse(text) as Record<string, unknown>;
   } catch {
-    return jsonError(502, "Upstream audit returned non-JSON.", `HTTP ${upstream.status}`);
+    return jsonError(502, "Upstream audit returned non-JSON.", text.slice(0, 200));
   }
 
   if (!upstream.ok) {
-    return new Response(JSON.stringify(result), {
-      status: upstream.status,
-      headers: { "Content-Type": "application/json" },
-    });
+    return Response.json(result, { status: upstream.status });
   }
 
-  return {
-    ...(result as Record<string, unknown>),
+  return Response.json({
+    ...result,
     attested: true,
     service: "phylax-audit-deep",
     pricing: { model: "x402", amount_usdc: 0.05 },
-  };
+  });
 }

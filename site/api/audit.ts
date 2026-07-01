@@ -120,8 +120,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(402).json(deepAuditPaymentRequired());
     return;
   }
-  if (mode !== undefined && mode !== "fast") {
-    res.status(400).json({ error: "'mode' must be 'fast'. Deep audits use Bankr x402.", ...deepAuditPaymentRequired() });
+  if (mode !== undefined && mode !== "fast" && mode !== "deep") {
+    res.status(400).json({ error: "'mode' must be 'fast' or 'deep' (deep requires x402 or internal auth)." });
     return;
   }
   if (contracts !== undefined && !Array.isArray(contracts)) {

@@ -11,7 +11,7 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   cors, clientIp, rateLimited, resolveSkillUrl, cacheGet, cacheSet,
   MAX_BODY_BYTES, validateSkillSource, validateEndpointList, validateContractList,
-  deepAuditPaymentRequired, X402_DEEP_AUDIT_URL,
+  deepAuditPaymentRequired, X402_DEEP_AUDIT_URL, allowsInternalDeepAudit,
 } from "./_lib.js";
 
 function applyRate(req: VercelRequest, res: VercelResponse): boolean {
@@ -56,11 +56,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (!applyRate(req, res)) return;
-    if (req.query.mode === "deep") {
+    const internalDeep = allowsInternalDeepAudit(req);
+    if (req.query.mode === "deep" && !internalDeep) {
       res.status(402).json(deepAuditPaymentRequired());
       return;
     }
-    const mode = "fast";
+    const mode = req.query.mode === "deep" ? "deep" : "fast";
     const cacheKey = `${skill}::${mode}`;
     const cached = cacheGet(cacheKey);
     if (cached) { res.setHeader("X-Cache", "HIT"); res.status(200).json(cached); return; }
@@ -115,7 +116,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(400).json({ error: "'skill_source' is required and must be a non-empty string." });
     return;
   }
-  if (mode === "deep") {
+  if (mode === "deep" && !allowsInternalDeepAudit(req)) {
     res.status(402).json(deepAuditPaymentRequired());
     return;
   }
@@ -158,7 +159,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     contracts: safeContracts,
     endpoints: safeEndpoints,
     chain_id: typeof chain_id === "number" ? chain_id : undefined,
-    mode: "fast",
+    mode: mode === "deep" ? "deep" : "fast",
   };
 
   try {

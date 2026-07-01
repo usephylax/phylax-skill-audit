@@ -25,6 +25,16 @@ export function deepAuditPaymentRequired() {
     },
   };
 }
+
+/** x402 Cloud handler authenticates with this header to run deep audits on Vercel. */
+export function allowsInternalDeepAudit(req: { headers?: Record<string, string | string[] | undefined> }): boolean {
+  const expected = process.env.PHYLAX_INTERNAL_AUDIT_KEY?.trim();
+  if (!expected) return false;
+  const raw = req.headers?.["x-phylax-internal-key"];
+  const provided = Array.isArray(raw) ? raw[0] : raw;
+  return typeof provided === "string" && provided.length > 0 && provided === expected;
+}
+
 export const MAX_BODY_BYTES = 256 * 1024;
 export const MAX_SKILL_SOURCE_LEN = 2048;
 export const MAX_ENDPOINTS = 20;

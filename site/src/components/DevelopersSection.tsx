@@ -40,7 +40,7 @@ export function DevelopersSection() {
               npm, API, <span className="text-accent">embed badge</span>
             </>
           }
-          description="Same engine everywhere — CLI, hosted API, or SVG badge. MIT licensed, no API key required."
+          description="Fast mode is free (CLI + API). Deep mode ($0.05 USDC) on Bankr x402 Cloud — honeypot simulation on Base."
         />
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">

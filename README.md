@@ -26,7 +26,7 @@ and validates x402 endpoints. Returns a **deterministic** risk verdict
 
 ## Use it
 
-Four ways, all live:
+Five ways, all live:
 
 ```bash
 # 1. Install from npm
@@ -35,14 +35,19 @@ npm install phylax-skill-audit
 # 2. Run the CLI (no install needed)
 npx phylax --skill ./SKILL.md
 
-# 3. Call the hosted HTTP API
+# 3. Call the hosted HTTP API (fast mode — free)
 curl -X POST https://usephylax.com/api/audit \
   -H "Content-Type: application/json" \
-  -d '{"skill_source":"github.com/owner/repo/SKILL.md"}'
+  -d '{"skill_source":"github.com/owner/repo/SKILL.md","mode":"fast"}'
 
-# 4. As an Aeon skill
+# 4. Deep audit on Bankr x402 Cloud ($0.05 USDC) — see x402/README.md
+# bankr x402 deploy → https://x402.bankr.bot/0xYourWallet/audit-deep
+
+# 5. As an Aeon skill
 ./add-skill aaronjmars/aeon phylax-audit
 ```
+
+**Positioning:** Phylax is a **security layer** for skills and x402 endpoints on [Bankr](https://bankr.bot/terminal/x402) — it audits what you install and what you pay for. It complements x402 Cloud; it does not compete with it.
 
 ## Build from source
 
@@ -94,7 +99,9 @@ console.log(result.findings);
 
 ## HTTP API
 
-A hosted endpoint wraps the same `audit()` engine:
+### Fast (free)
+
+Hosted endpoint on Vercel — `mode=fast` only:
 
 ```
 POST https://usephylax.com/api/audit
@@ -109,12 +116,25 @@ Content-Type: application/json
   "contracts": [],        // optional, auto-extracted
   "endpoints": [],        // optional, auto-extracted
   "chain_id": 8453,       // default Base
-  "mode": "fast"          // "fast" | "deep"
+  "mode": "fast"          // only fast on free tier
 }
 ```
 
 Returns the same `AuditOutput` JSON (`verdict`, `score`, `findings`, `summary`, `ttl`).
 Rate-limited to 20 requests/min per IP. `GET /api/audit` returns a self-describing usage doc.
+
+Requesting `mode=deep` returns **HTTP 402** with your Bankr x402 endpoint URL.
+
+### Deep ($0.05 USDC) — Bankr x402 Cloud
+
+Deploy from this repo (`bankr x402 deploy`). See [`x402/README.md`](./x402/README.md).
+
+```
+POST https://x402.bankr.bot/0xYourWallet/audit-deep
+```
+
+Same request body (without `mode` — always deep). Payments settle in USDC on Base.
+List on [bankr.bot/terminal/x402](https://bankr.bot/terminal/x402) after deploy.
 
 **Security (v0.2.2+):** the hosted API blocks SSRF targets (localhost, private IPs, cloud metadata),
 requires HTTPS for remote fetches, rejects local file paths as `skill_source`, and validates
@@ -178,6 +198,10 @@ Detection rules live in [`rules/`](./rules/) as versioned YAML files:
 
 ```
 phylax-skill-audit/
+├── bankr.x402.json       # Bankr x402 Cloud config (audit-deep @ $0.05)
+├── x402/
+│   ├── README.md         # Deploy + terminal listing guide
+│   └── audit-deep/       # x402 handler (mode=deep)
 ├── SKILL.md              # Skill definition
 ├── catalog.json          # Catalog metadata
 ├── src/

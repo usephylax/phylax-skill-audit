@@ -44,8 +44,8 @@ export function Hero() {
           transition={{ ...springSoft, delay: 0.12 }}
           className="mt-4 text-sm sm:text-base text-text-secondary max-w-lg mx-auto leading-relaxed"
         >
-          Scans SKILL.md, contracts, and x402 endpoints — returns a deterministic
-          verdict with evidence.
+          Security layer for Bankr skills &amp; x402 APIs. Scans SKILL.md, contracts,
+          and payment endpoints — deterministic verdict with evidence.
         </m.p>
 
         <m.div

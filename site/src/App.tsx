@@ -6,6 +6,7 @@ import { Engines } from "./components/Engines";
 import { RulesTable } from "./components/RulesTable";
 import { VerdictSection } from "./components/VerdictSection";
 import { DevelopersSection } from "./components/DevelopersSection";
+import { X402Section } from "./components/X402Section";
 import { OfficialToken } from "./components/OfficialToken";
 import { FinalCta } from "./components/FinalCta";
 import { Footer } from "./components/Footer";
@@ -31,6 +32,7 @@ export default function App() {
 
             <div className="section-band">
               <DevelopersSection />
+              <X402Section />
             </div>
 
             <OfficialToken />

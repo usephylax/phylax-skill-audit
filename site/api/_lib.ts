@@ -3,6 +3,28 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { productionFetchPolicy, validateFetchUrl } from "phylax-skill-audit";
 
 export const ALLOWED_MODES = new Set(["fast", "deep"]);
+
+/** Paid deep audits on Bankr x402 Cloud — set after `bankr x402 deploy`. */
+export const X402_DEEP_AUDIT_URL =
+  process.env.PHYLAX_X402_DEEP_URL?.trim() ||
+  "https://x402.bankr.bot/0x7fc2987df6e0fb7567d64838696a5bac4d220b91/audit-deep";
+export const X402_DEEP_PRICE_USDC = "0.05";
+
+export function deepAuditPaymentRequired() {
+  return {
+    error: "Deep audit requires x402 payment.",
+    detail:
+      "Fast mode is free on this endpoint. Deep mode (honeypot simulation + full onchain checks) is $0.05 USDC/request on Bankr x402 Cloud.",
+    mode: "deep",
+    pricing: { model: "x402", amount_usdc: X402_DEEP_PRICE_USDC, currency: "USDC", network: "base" },
+    x402_endpoint: X402_DEEP_AUDIT_URL,
+    free_alternative: {
+      mode: "fast",
+      endpoint: "POST https://usephylax.com/api/audit",
+      cli: "npx phylax@0.2.2 --skill ./SKILL.md --mode deep",
+    },
+  };
+}
 export const MAX_BODY_BYTES = 256 * 1024;
 export const MAX_SKILL_SOURCE_LEN = 2048;
 export const MAX_ENDPOINTS = 20;

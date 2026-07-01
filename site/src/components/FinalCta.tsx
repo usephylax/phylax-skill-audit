@@ -34,6 +34,13 @@ export function FinalCta() {
             >
               Bankr
             </a>
+            {" · "}
+            <a
+              href="https://bankr.bot/terminal/x402"
+              className="text-text-secondary hover:text-accent transition-colors"
+            >
+              x402
+            </a>
           </p>
         </m.div>
       </div>

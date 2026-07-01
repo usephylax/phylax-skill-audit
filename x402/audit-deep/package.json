@@ -1,0 +1,8 @@
+{
+  "name": "phylax-audit-deep-x402",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "phylax-skill-audit": "0.2.2"
+  }
+}

@@ -23,6 +23,7 @@
     "test:watch": "vitest",
     "cli": "node dist/cli.js",
     "bankr:sync": "node scripts/bankr-sync-profile.mjs",
+    "bankr:x402:onboard": "node scripts/bankr-x402-onboard.mjs",
     "prepublishOnly": "npm run build && npm test"
   },
   "repository": {

@@ -25,3 +25,7 @@ site/.vercel/
 
 # Private security report — DO NOT commit (responsible disclosure)
 AEON-SECURITY-REPORT.md
+
+# Telegram bot secrets (see phylax-telegram-bot/.env.example)
+phylax-telegram-bot/**/.env
+phylax-telegram-bot/**/.dev.vars

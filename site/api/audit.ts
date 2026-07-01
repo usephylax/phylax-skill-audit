@@ -10,7 +10,8 @@ import { audit, type AuditInput } from "phylax-skill-audit";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   cors, clientIp, rateLimited, resolveSkillUrl, cacheGet, cacheSet,
-  ALLOWED_MODES, MAX_BODY_BYTES, validateSkillSource, validateEndpointList, validateContractList,
+  MAX_BODY_BYTES, validateSkillSource, validateEndpointList, validateContractList,
+  deepAuditPaymentRequired, X402_DEEP_AUDIT_URL,
 } from "./_lib.js";
 
 function applyRate(req: VercelRequest, res: VercelResponse): boolean {
@@ -45,12 +46,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         },
         docs: "https://github.com/usephylax/phylax-skill-audit",
         returns: "{ verdict: 'ALLOW'|'WARN'|'DENY', score, findings, summary, ttl, attested }",
+        pricing: {
+          fast: { price: "free", endpoint: "this API (mode=fast)" },
+          deep: { price: "$0.05 USDC", endpoint: X402_DEEP_AUDIT_URL, model: "x402" },
+        },
+        positioning: "Security layer for skills & x402 endpoints on Bankr — complements x402 Cloud.",
       });
       return;
     }
 
     if (!applyRate(req, res)) return;
-    const mode = req.query.mode === "deep" ? "deep" : "fast";
+    if (req.query.mode === "deep") {
+      res.status(402).json(deepAuditPaymentRequired());
+      return;
+    }
+    const mode = "fast";
     const cacheKey = `${skill}::${mode}`;
     const cached = cacheGet(cacheKey);
     if (cached) { res.setHeader("X-Cache", "HIT"); res.status(200).json(cached); return; }
@@ -105,8 +115,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(400).json({ error: "'skill_source' is required and must be a non-empty string." });
     return;
   }
-  if (mode !== undefined && !ALLOWED_MODES.has(mode)) {
-    res.status(400).json({ error: "'mode' must be 'fast' or 'deep'." });
+  if (mode === "deep") {
+    res.status(402).json(deepAuditPaymentRequired());
+    return;
+  }
+  if (mode !== undefined && mode !== "fast") {
+    res.status(400).json({ error: "'mode' must be 'fast'. Deep audits use Bankr x402.", ...deepAuditPaymentRequired() });
     return;
   }
   if (contracts !== undefined && !Array.isArray(contracts)) {
@@ -144,7 +158,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     contracts: safeContracts,
     endpoints: safeEndpoints,
     chain_id: typeof chain_id === "number" ? chain_id : undefined,
-    mode: mode === "deep" ? "deep" : "fast",
+    mode: "fast",
   };
 
   try {

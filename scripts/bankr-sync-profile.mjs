@@ -11,6 +11,11 @@
 
 const API = "https://api.bankr.bot";
 const KEY = process.env.BANKR_API_KEY;
+const X402_DEEP_URL =
+  process.env.PHYLAX_X402_DEEP_URL?.trim() || "https://bankr.bot/terminal/x402";
+
+const TAGLINE =
+  "Security layer for skills & x402 endpoints on Bankr. Pre-install audits — complements x402 Cloud, does not compete.";
 
 if (!KEY) {
   console.error("Missing BANKR_API_KEY. Export your key from https://bankr.bot/api-keys");
@@ -44,13 +49,18 @@ async function api(method, path, body) {
 const PRODUCTS = [
   {
     name: "Phylax CLI + npm",
-    description: "npx phylax@0.2.2 --skill ./SKILL.md — deterministic ALLOW/WARN/DENY verdict.",
+    description: "npx phylax@0.2.2 --skill ./SKILL.md — deterministic ALLOW/WARN/DENY verdict (fast, free).",
     url: "https://www.npmjs.com/package/phylax-skill-audit/v/0.2.2",
   },
   {
-    name: "Audit API",
-    description: "POST /api/audit and GET /api/badge — hosted verdict + embeddable SVG badge (SSRF-hardened).",
+    name: "Audit API (fast, free)",
+    description: "POST /api/audit mode=fast + GET /api/badge — hosted verdict + embeddable SVG badge.",
     url: "https://usephylax.com/api/audit",
+  },
+  {
+    name: "Deep audit (x402)",
+    description: `Bankr x402 Cloud — honeypot simulation on Base. $0.05 USDC/request.`,
+    url: X402_DEEP_URL,
   },
   {
     name: "Aeon skill",
@@ -60,14 +70,14 @@ const PRODUCTS = [
 ];
 
 const UPDATE = {
-  title: "v0.2.2 — API hardening & test suite",
+  title: "x402 Cloud — deep audits + Bankr security layer",
   content: [
-    "Shipped phylax-skill-audit@0.2.2 on npm.",
+    TAGLINE,
     "",
-    "• SSRF guards on hosted API (blocks private IPs, metadata hosts, local paths)",
-    "• fast vs deep mode documented; honeypot simulation in deep mode",
-    "• 54 automated tests (integration + urlSafety)",
-    "• Official CA on usephylax.com/#token",
+    "• Fast audits: free at https://usephylax.com/api/audit",
+    `• Deep audits: $0.05 USDC on Bankr x402 → ${X402_DEEP_URL}`,
+    "• Validates x402 payment endpoints (X402-*) for other Bankr builders",
+    "• Deploy: bankr x402 deploy from github.com/usephylax/phylax-skill-audit",
     "",
     "Open source: https://github.com/usephylax/phylax-skill-audit",
   ].join("\n"),
@@ -79,7 +89,7 @@ async function main() {
 
   await api("PUT", "/agent/profile", {
     description:
-      "Pre-install security audit for agent skills on Base. Scans SKILL.md, onchain contracts, and x402 endpoints — deterministic ALLOW / WARN / DENY with evidence. npm v0.2.2, hosted API, Aeon skill. Open source (MIT).",
+      "Security layer for skills & x402 endpoints on Bankr. Pre-install audit: SKILL.md, contracts, x402 APIs — ALLOW/WARN/DENY with evidence. Free fast tier (npm + API), deep mode on x402 Cloud ($0.05). Open source (MIT).",
     website: "https://usephylax.com",
     products: PRODUCTS,
   });

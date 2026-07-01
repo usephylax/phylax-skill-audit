@@ -1,0 +1,66 @@
+{
+  "network": "base",
+  "currency": "USDC",
+  "services": {
+    "audit-deep": {
+      "description": "Phylax deep skill audit — honeypot simulation on Base + full x402 endpoint validation. Security layer for Bankr skills and x402 APIs.",
+      "price": "0.05",
+      "methods": ["POST"],
+      "category": "security",
+      "tags": ["security", "audit", "phylax", "skills", "x402"],
+      "discoverable": true,
+      "schema": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "skill_source": {
+              "type": "string",
+              "description": "GitHub-style path (owner/repo), HTTPS URL to SKILL.md, or inline markdown when skill_md is set"
+            },
+            "skill_md": {
+              "type": "string",
+              "description": "Optional raw SKILL.md content (skips remote fetch)"
+            },
+            "manifest": {
+              "type": "string",
+              "description": "Optional manifest JSON string"
+            },
+            "contracts": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Contract refs like 0xabc... (chainId:8453) — auto-extracted if omitted"
+            },
+            "endpoints": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "HTTPS x402 or API URLs — auto-extracted from SKILL.md if omitted"
+            },
+            "chain_id": {
+              "type": "number",
+              "description": "EVM chain ID (default 8453 Base)"
+            }
+          },
+          "required": ["skill_source"]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "skill": { "type": "string", "description": "Audited skill reference" },
+            "verdict": {
+              "type": "string",
+              "enum": ["ALLOW", "WARN", "DENY"],
+              "description": "Deterministic risk verdict"
+            },
+            "score": { "type": "number", "description": "0–100 risk score" },
+            "findings": {
+              "type": "array",
+              "description": "Rule hits with evidence (PI-*, SEC-*, CON-*, X402-*, etc.)"
+            },
+            "summary": { "type": "string", "description": "One-paragraph human summary" },
+            "ttl": { "type": "string", "description": "Verdict freshness window (24h)" }
+          }
+        }
+      }
+    }
+  }
+}

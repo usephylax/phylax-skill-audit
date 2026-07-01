@@ -1,5 +1,8 @@
 /**
- * Bankr x402 Cloud handler — proxies deep audits to Vercel (rules + RPC infra).
+ * Bankr x402 Cloud handler — payment gateway → Vercel deep engine.
+ *
+ * Bankr deploy uploads this file only. Do not import phylax-skill-audit or local
+ * modules; rule YAML and Base RPC run on usephylax.com via PHYLAX_INTERNAL_AUDIT_KEY.
  */
 
 const AUDIT_API = "https://usephylax.com/api/audit";

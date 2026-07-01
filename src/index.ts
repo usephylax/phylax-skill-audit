@@ -19,7 +19,8 @@ import { calculateScore, deriveVerdict, generateSummary } from "./scoring.js";
 import { productionFetchPolicy, validateFetchUrl } from "./urlSafety.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_RULES_DIR = resolve(__dirname, "..", "rules");
+const DEFAULT_RULES_DIR =
+  process.env.PHYLAX_RULES_DIR?.trim() || resolve(__dirname, "..", "rules");
 const DEFAULT_CHAIN_ID = 8453;
 const DEFAULT_RPC_URL = "https://mainnet.base.org";
 const VERDICT_TTL = "24h";

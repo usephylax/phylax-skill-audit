@@ -3,7 +3,7 @@
 Live: https://usephylax.com/#playground
 
 **Attach for tweet:**
-- **Video (recommended):** `assets/phylax-playground-demo.mp4` (**1920×1080, 60fps, ~24s**, H.264, ~2.5 MB)
+- **Video (recommended):** `assets/phylax-playground-demo.mp4` (**1920×1080, 60fps, ~12s**, no intro — straight to demo)
 - **GIF fallback:** `assets/phylax-playground-demo.gif` (~7.8 MB)
 - **Poster/thumbnail:** `assets/phylax-playground-demo-poster.png`
 

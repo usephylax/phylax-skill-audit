@@ -41,14 +41,14 @@ Adds **phylax-skill-audit** — pre-install security audit for agent skills on B
 - Scans SKILL.md for prompt-injection, secret exfiltration, manifest issues
 - Contract risk checks + x402 endpoint validation
 - Hosted API at https://usephylax.com/api/audit (SSRF-hardened)
-- Open source: https://github.com/usephylax/phylax-skill-audit (MIT, npm v0.2.2)
+- Open source: https://github.com/usephylax/phylax-skill-audit (MIT, npm v0.2.3)
 - Also native in Aeon: `./add-skill aaronjmars/aeon phylax-audit`
 
 ## Test plan
 
 - [x] `catalog.json` slug matches folder name (`phylax-skill-audit`)
 - [x] `SKILL.md` has `name` + `description` frontmatter
-- [x] CLI tested: `npx phylax@0.2.2 --skill ./SKILL.md` on clean + malicious fixtures
+- [x] CLI tested: `npx phylax@0.2.3 --skill ./SKILL.md` on clean + malicious fixtures
 - [x] Hosted API: `POST https://usephylax.com/api/audit` returns valid JSON verdict
 - [x] Read-only — no signing, no key requests
 

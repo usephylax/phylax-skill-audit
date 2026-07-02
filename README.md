@@ -123,6 +123,8 @@ Content-Type: application/json
 Returns the same `AuditOutput` JSON (`verdict`, `score`, `findings`, `summary`, `ttl`).
 Rate-limited to 20 requests/min per IP. `GET /api/audit` returns a self-describing usage doc.
 
+**Live playground:** https://usephylax.com/#playground — paste a `SKILL.md` or `owner/repo` ref in the browser.
+
 Requesting `mode=deep` returns **HTTP 402** with your Bankr x402 endpoint URL.
 
 ### Deep ($0.05 USDC) — Bankr x402 Cloud
@@ -135,7 +137,7 @@ POST https://x402.bankr.bot/0x7fc2987df6e0fb7567d64838696a5bac4d220b91/audit-dee
 
 Same request body (always deep). Payments settle in USDC on Base.
 
-**Security (v0.2.2+):** the hosted API blocks SSRF targets (localhost, private IPs, cloud metadata),
+**Security (v0.2.3+):** the hosted API blocks SSRF targets (localhost, private IPs, cloud metadata),
 requires HTTPS for remote fetches, rejects local file paths as `skill_source`, and validates
 redirect chains on endpoint probes.
 

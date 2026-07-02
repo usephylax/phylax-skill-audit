@@ -49,8 +49,8 @@ async function api(method, path, body) {
 const PRODUCTS = [
   {
     name: "Phylax CLI + npm",
-    description: "npx phylax@0.2.2 --skill ./SKILL.md — deterministic ALLOW/WARN/DENY verdict (fast, free).",
-    url: "https://www.npmjs.com/package/phylax-skill-audit/v/0.2.2",
+    description: "npx phylax@0.2.3 --skill ./SKILL.md — deterministic ALLOW/WARN/DENY verdict (fast, free).",
+    url: "https://www.npmjs.com/package/phylax-skill-audit/v/0.2.3",
   },
   {
     name: "Audit API (fast, free)",

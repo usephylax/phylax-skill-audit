@@ -2,8 +2,14 @@
 
 Live: https://usephylax.com/#playground
 
+**Attach for tweet:**
+- **Video (recommended):** `assets/phylax-playground-demo.mp4` (1280×800, ~27s, H.264, ~1.6 MB)
+- **GIF fallback:** `assets/phylax-playground-demo.gif` (~7.5 MB)
+- **Poster/thumbnail:** `assets/phylax-playground-demo-poster.png`
+
+Re-record: `cd site && DEMO_BASE=https://usephylax.com node scripts/record-playground-demo.mjs`
+
 > ✅ Safe to post — public product, no GHSA details.
-> Attach: screen recording of playground DENY on sample, or `assets/phylax-x402-demo.gif` as fallback.
 
 ---
 

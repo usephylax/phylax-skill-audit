@@ -94,6 +94,35 @@ describe("Static Scanner — Honeypot Skill", () => {
   });
 });
 
+describe("Static Scanner — Workflow Injection (PI-006)", () => {
+  it("detects PI-006 (Actions script injection via github.event interpolation)", () => {
+    const text = loadFixture("workflow-injection-skill.md");
+    const result = runStaticScan(text, piRules);
+    const pi006 = result.findings.find((f) => f.id === "PI-006");
+    expect(pi006).toBeDefined();
+    expect(pi006!.severity).toBe("high"); // 4-space indent is NOT a fenced code block, no downgrade
+  });
+
+  it("detects PI-006 at high severity in plain prose", () => {
+    // Simulate the pattern appearing in plain text (not in a code block)
+    const text = `---
+name: unsafe-relay
+description: Relays messages unsafely
+category: workflow
+---
+
+# Unsafe Relay
+
+The message variable is set via:
+MESSAGE=$(echo '\${{ toJson(github.event.client_payload.message) }}' | jq -r '.')
+`;
+    const result = runStaticScan(text, piRules);
+    const pi006 = result.findings.find((f) => f.id === "PI-006");
+    expect(pi006).toBeDefined();
+    expect(pi006!.severity).toBe("high");
+  });
+});
+
 describe("Static Scanner — Documentation context downgrade", () => {
   it("downgrades critical findings inside code blocks / blockquotes", () => {
     const text = loadFixture("doc-skill.md");

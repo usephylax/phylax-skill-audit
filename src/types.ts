@@ -48,7 +48,7 @@ export interface AuditInput {
 
 /** The JSON verdict output. */
 export interface AuditOutput {
-  skill: string;        // "owner/repo@<slug>"
+  skill: string;        // resolved source: raw "https://.../SKILL.md" URL or the raw URL passed in
   verdict: Verdict;
   score: number;
   findings: Finding[];

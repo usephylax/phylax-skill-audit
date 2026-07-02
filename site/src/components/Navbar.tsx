@@ -6,6 +6,7 @@ import { springSoft } from "../motion";
 const NAV = [
   { label: "How it works", href: "#engines" },
   { label: "Verdict", href: "#scoring" },
+  { label: "Try it", href: "#playground" },
   { label: "Developers", href: "#integration" },
   { label: "x402", href: "#x402" },
   { label: "Token", href: "#token" },

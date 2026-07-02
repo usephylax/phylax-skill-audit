@@ -9,13 +9,13 @@
 import { audit, type AuditInput } from "phylax-skill-audit";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
-  cors, clientIp, rateLimited, resolveSkillUrl, cacheGet, cacheSet,
+  cors, clientIp, checkRateLimit, resolveSkillUrl, readCache, writeCache,
   MAX_BODY_BYTES, validateSkillSource, validateEndpointList, validateContractList,
   deepAuditPaymentRequired, X402_DEEP_AUDIT_URL, allowsInternalDeepAudit,
 } from "./_lib.js";
 
-function applyRate(req: VercelRequest, res: VercelResponse): boolean {
-  const rl = rateLimited(clientIp(req));
+async function applyRate(req: VercelRequest, res: VercelResponse): Promise<boolean> {
+  const rl = await checkRateLimit(clientIp(req));
   res.setHeader("X-RateLimit-Limit", String(rl.limit));
   res.setHeader("X-RateLimit-Remaining", String(rl.remaining));
   if (rl.limited) {
@@ -55,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    if (!applyRate(req, res)) return;
+    if (!(await applyRate(req, res))) return;
     const internalDeep = allowsInternalDeepAudit(req);
     if (req.query.mode === "deep" && !internalDeep) {
       res.status(402).json(deepAuditPaymentRequired());
@@ -63,13 +63,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     const mode = req.query.mode === "deep" ? "deep" : "fast";
     const cacheKey = `${skill}::${mode}`;
-    const cached = cacheGet(cacheKey);
+    const cached = await readCache(cacheKey);
     if (cached) { res.setHeader("X-Cache", "HIT"); res.status(200).json(cached); return; }
 
     try {
       const url = resolveSkillUrl(skill);
       const result = await audit({ skill_source: url, mode });
-      cacheSet(cacheKey, result);
+      await writeCache(cacheKey, result);
       res.setHeader("X-Cache", "MISS");
       res.status(200).json(result);
     } catch (err) {
@@ -89,7 +89,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // ── POST ───────────────────────────────────────────────────────────────
-  if (!applyRate(req, res)) return;
+  if (!(await applyRate(req, res))) return;
 
   let body: unknown = req.body;
   try {

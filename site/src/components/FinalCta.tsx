@@ -27,7 +27,7 @@ export function FinalCta() {
             <IconArrowRight size={16} />
           </a>
           <p className="mt-5 text-[11px] text-text-muted font-mono">
-            v0.2.2 · MIT ·{" "}
+            v0.2.3 · MIT ·{" "}
             <a
               href="https://bankr.bot/agents/phylax"
               className="text-text-secondary hover:text-accent transition-colors"

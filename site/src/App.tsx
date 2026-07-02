@@ -5,6 +5,7 @@ import { TrustStrip } from "./components/TrustStrip";
 import { Engines } from "./components/Engines";
 import { RulesTable } from "./components/RulesTable";
 import { VerdictSection } from "./components/VerdictSection";
+import { Playground } from "./components/Playground";
 import { DevelopersSection } from "./components/DevelopersSection";
 import { X402Section } from "./components/X402Section";
 import { OfficialToken } from "./components/OfficialToken";
@@ -29,6 +30,8 @@ export default function App() {
             </div>
 
             <VerdictSection />
+
+            <Playground />
 
             <div className="section-band">
               <DevelopersSection />

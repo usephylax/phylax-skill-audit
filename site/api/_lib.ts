@@ -1,6 +1,14 @@
 // api/_lib.ts — shared helpers for the Phylax HTTP API (not a route; underscore-prefixed).
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { productionFetchPolicy, validateFetchUrl } from "phylax-skill-audit";
+import { kvRateLimited, kvCacheGet, kvCacheSet, type RateLimitResult } from "./_kv.js";
+
+function hasKvConfig(): boolean {
+  return Boolean(
+    process.env.UPSTASH_REDIS_REST_URL?.trim() &&
+      process.env.UPSTASH_REDIS_REST_TOKEN?.trim(),
+  );
+}
 
 export const ALLOWED_MODES = new Set(["fast", "deep"]);
 
@@ -21,7 +29,7 @@ export function deepAuditPaymentRequired() {
     free_alternative: {
       mode: "fast",
       endpoint: "POST https://usephylax.com/api/audit",
-      cli: "npx phylax@0.2.2 --skill ./SKILL.md --mode deep",
+      cli: "npx phylax@0.2.3 --skill ./SKILL.md --mode deep",
     },
   };
 }
@@ -168,4 +176,23 @@ export function cacheSet(key: string, value: unknown) {
     const now = Date.now();
     for (const [k, v] of cache) if (now - v.at > CACHE_TTL_MS) cache.delete(k);
   }
+}
+
+/** Redis when configured, otherwise per-instance in-memory limiter. */
+export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
+  if (hasKvConfig()) return kvRateLimited(ip);
+  return rateLimited(ip);
+}
+
+/** Read verdict cache — Redis first, then in-memory fallback. */
+export async function readCache(key: string): Promise<unknown | null> {
+  const kv = await kvCacheGet(key);
+  if (kv !== null) return kv;
+  return cacheGet(key);
+}
+
+/** Write verdict cache to both tiers (best-effort Redis). */
+export async function writeCache(key: string, value: unknown): Promise<void> {
+  cacheSet(key, value);
+  await kvCacheSet(key, value);
 }

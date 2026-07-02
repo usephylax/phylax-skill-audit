@@ -47,3 +47,15 @@ rules:
       - "exec\\s*\\("
       - "import\\s+subprocess"
       - "child_process"
+
+  - id: PI-006
+    severity: high
+    description: "GitHub Actions script injection: untrusted context interpolated into a shell run block (ref GHSA-252c-qvvq-j2j9 F1)"
+    patterns:
+      # ${{ github.event.* }} / ${{ toJson(github.event.*) }} directly inside shell single/double quotes
+      - "'\\$\\{\\{\\s*(toJson\\s*\\(\\s*)?github\\.event\\.[^}]+\\}\\}'"
+      - "\"\\$\\{\\{\\s*(toJson\\s*\\(\\s*)?github\\.event\\.[^}]+\\}\\}\""
+      # echo/printf piping an unbound expression expansion
+      - "(echo|printf)\\s+['\"]\\$\\{\\{\\s*(toJson\\s*\\(\\s*)?github\\.event\\.[^}]+\\}\\}['\"]"
+      # inline command substitution around the same
+      - "\\$\\(\\s*echo\\s+['\"]\\$\\{\\{\\s*(toJson\\s*\\(\\s*)?github\\.event\\."

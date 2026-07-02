@@ -38,3 +38,13 @@ assets/*-tweets.md
 assets/launch-tweets.md
 assets/x402-card.html
 site/.demo-out/
+site/scripts/record-*.mjs
+site/scripts/export-*.mjs
+site/scripts/shoot-*.mjs
+
+# PR staging copy (lives in usephylax/skills fork)
+bankr-submission/
+
+# Local scaffolds / private notes — not part of the published package
+phylax-telegram-bot/
+security/

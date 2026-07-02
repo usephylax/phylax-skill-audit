@@ -29,3 +29,12 @@ AEON-SECURITY-REPORT.md
 # Telegram bot secrets (see phylax-telegram-bot/.env.example)
 phylax-telegram-bot/**/.env
 phylax-telegram-bot/**/.dev.vars
+
+# Demo / tweet assets (local only — keep repo lean; logo stays tracked)
+assets/phylax-playground-demo*
+assets/phylax-x402-demo*
+assets/phylax-tweet-*
+assets/*-tweets.md
+assets/launch-tweets.md
+assets/x402-card.html
+site/.demo-out/

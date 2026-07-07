@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: usephylax/phylax-skill-audit@v0.2.4
+      - uses: usephylax/phylax-skill-audit@v0.2.5
         with:
           skill: ./SKILL.md
           fail-on: deny   # deny | warn | none

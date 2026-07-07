@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { background:#08080C; }
+  .card {
+    position:relative; width:1200px; height:675px; overflow:hidden;
+    background:
+      radial-gradient(650px 380px at 20% 60%, rgba(59,130,246,.14), transparent 62%),
+      radial-gradient(480px 300px at 85% 25%, rgba(72,216,255,.06), transparent 55%),
+      #08080C;
+    font-family:'Inter',system-ui,sans-serif; color:#E8E8EC;
+  }
+  .glow-line {
+    position:absolute; left:0; right:0; top:0; height:2px;
+    background:linear-gradient(90deg, transparent, #3B82F6, #48D8FF, #3B82F6, transparent);
+  }
+  .grid {
+    position:absolute; inset:0; opacity:.22;
+    background-image:
+      linear-gradient(rgba(59,130,246,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,.06) 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+  .wrap { position:relative; z-index:2; padding:48px 54px; height:100%; display:flex; flex-direction:column; }
+  .top { display:flex; align-items:center; justify-content:space-between; }
+  .brand { display:flex; align-items:center; gap:14px; }
+  .brand svg { width:48px; height:48px; }
+  .brand-name { font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:20px; letter-spacing:.2em; }
+  .badge {
+    font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:#4ade80;
+    background:rgba(34,197,94,.1); border:1.5px solid rgba(34,197,94,.4);
+    padding:8px 14px; border-radius:999px;
+  }
+  .headline { margin-top:32px; font-size:50px; font-weight:900; line-height:1.08; letter-spacing:-.03em; max-width:780px; }
+  .headline .accent { color:#48D8FF; }
+  .sub { margin-top:16px; font-size:21px; color:#8888A0; line-height:1.45; max-width:700px; font-weight:500; }
+  .sub strong { color:#E8E8EC; font-weight:600; }
+  .flow { margin-top:28px; display:flex; gap:14px; align-items:center; }
+  .step {
+    font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600;
+    padding:10px 16px; border-radius:10px; border:1.5px solid rgba(72,216,255,.25);
+    background:rgba(59,130,246,.06); color:#48D8FF;
+  }
+  .arrow { color:#4A4A5A; font-size:20px; font-weight:700; }
+  .bottom { margin-top:auto; display:flex; align-items:flex-end; justify-content:space-between; }
+  .tags { font-family:'IBM Plex Mono',monospace; font-size:15px; color:#8888A0; line-height:1.6; }
+  .tags span { color:#48D8FF; }
+  .url { font-family:'IBM Plex Mono',monospace; font-size:19px; color:#E8E8EC; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow-line"></div>
+  <div class="grid"></div>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+          <defs>
+            <linearGradient id="edge" x1="32" y1="3" x2="32" y2="61" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#48D8FF"/><stop offset="1" stop-color="#3B82F6"/>
+            </linearGradient>
+            <radialGradient id="core" cx="32" cy="28" r="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#11203A"/><stop offset="1" stop-color="#0E0E14"/>
+            </radialGradient>
+          </defs>
+          <path d="M32 3 L55 11 V29 C55 44 45.5 54 32 60 C18.5 54 9 44 9 29 V11 Z" fill="url(#core)" stroke="url(#edge)" stroke-width="2.5" stroke-linejoin="round"/>
+          <circle cx="32" cy="30" r="9.5" fill="none" stroke="#3B82F6" stroke-width="2"/>
+          <circle cx="32" cy="30" r="2" fill="#48D8FF"/>
+          <path d="M27 47.5 L30.5 51 L38 43.5" fill="none" stroke="#48D8FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-name">phylax</span>
+      </div>
+      <div class="badge">patched ✓</div>
+    </div>
+    <h1 class="headline">Responsible disclosure<br><span class="accent">on @aeonframework</span></h1>
+    <p class="sub"><strong>2 workflow findings</strong> reported privately → accepted, patched & published same day. Coordinated security, no drama.</p>
+    <div class="flow">
+      <div class="step">report</div>
+      <div class="arrow">→</div>
+      <div class="step">triage</div>
+      <div class="arrow">→</div>
+      <div class="step">patch</div>
+      <div class="arrow">→</div>
+      <div class="step">publish</div>
+    </div>
+    <div class="bottom">
+      <div class="tags">thanks <span>@aaronjmars</span> · <span>@aeonframework</span></div>
+      <div class="url">usephylax.com</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

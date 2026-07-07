@@ -80,7 +80,7 @@ export function DevelopersSection() {
             </TerminalWindow>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              {["npm v0.2.3", "Base 8453", "SSRF-hardened"].map((t) => (
+              {["npm v0.2.4", "Base 8453", "SSRF-hardened"].map((t) => (
                 <span key={t} className="tag-pill">
                   {t}
                 </span>

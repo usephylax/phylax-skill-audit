@@ -29,7 +29,7 @@ export function deepAuditPaymentRequired() {
     free_alternative: {
       mode: "fast",
       endpoint: "POST https://usephylax.com/api/audit",
-      cli: "npx phylax@0.2.3 --skill ./SKILL.md --mode deep",
+      cli: "npx phylax@0.2.4 --skill ./SKILL.md --mode deep",
     },
   };
 }

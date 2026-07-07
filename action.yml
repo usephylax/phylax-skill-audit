@@ -36,7 +36,7 @@ inputs:
   version:
     description: phylax-skill-audit npm version to run
     required: false
-    default: "0.2.4"
+    default: "0.2.5"
 
 outputs:
   verdict:

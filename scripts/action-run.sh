@@ -20,15 +20,25 @@ if [ -n "${INPUT_ENDPOINTS:-}" ]; then
 fi
 
 OUT="$(mktemp)"
-RUN_DIR="${RUNNER_TEMP:-/tmp}/phylax-action-$$"
-mkdir -p "$RUN_DIR"
-npm install --no-save --prefix "$RUN_DIR" "phylax-skill-audit@${VERSION}" >/dev/null 2>&1
+
+run_phylax() {
+  # Dogfood: use built CLI from the checked-out repo when available.
+  if [ -n "${GITHUB_WORKSPACE:-}" ] && [ -f "${GITHUB_WORKSPACE}/dist/cli.js" ]; then
+    node "${GITHUB_WORKSPACE}/dist/cli.js" "${ARGS[@]}"
+    return
+  fi
+
+  local run_dir="${RUNNER_TEMP:-/tmp}/phylax-action-$$"
+  mkdir -p "$run_dir"
+  npm install --no-save --prefix "$run_dir" "phylax-skill-audit@${VERSION}" >/dev/null 2>&1
+  node "$run_dir/node_modules/phylax-skill-audit/dist/cli.js" "${ARGS[@]}"
+  rm -rf "$run_dir"
+}
 
 set +e
-node "$RUN_DIR/node_modules/phylax-skill-audit/dist/cli.js" "${ARGS[@]}" >"$OUT" 2>&1
+run_phylax >"$OUT" 2>&1
 EXIT=$?
 set -e
-rm -rf "$RUN_DIR"
 
 cat "$OUT"
 

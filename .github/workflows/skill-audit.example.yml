@@ -1,0 +1,41 @@
+# Example — copy to your repo as .github/workflows/phylax-audit.yml
+#
+# name: Phylax audit
+# on:
+#   pull_request:
+#     paths: ['SKILL.md', 'skills/**/SKILL.md']
+# jobs:
+#   audit:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: usephylax/phylax-skill-audit@v0.2.4
+#         with:
+#           skill: ./SKILL.md
+#           fail-on: deny
+
+name: Phylax self-audit (example)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - SKILL.md
+      - rules/**
+      - src/**
+      - action.yml
+      - scripts/action-run.sh
+  workflow_dispatch:
+
+jobs:
+  audit-skill-md:
+    name: Audit SKILL.md
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Phylax — pre-install audit
+        uses: ./
+        with:
+          skill: ./SKILL.md
+          fail-on: deny

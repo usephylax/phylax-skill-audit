@@ -23,6 +23,19 @@ jobs:
       - run: npm test
       - run: npm run build
 
+  skill-audit:
+    name: Phylax — audit SKILL.md
+    runs-on: ubuntu-latest
+    needs: package
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pre-install audit (dogfood action)
+        uses: ./
+        with:
+          skill: ./tests/fixtures/clean-skill.md
+          fail-on: deny
+
   site:
     name: Site — lint & build
     runs-on: ubuntu-latest

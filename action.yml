@@ -1,0 +1,72 @@
+name: Phylax Skill Audit
+description: Pre-install security audit for agent skills — deterministic ALLOW / WARN / DENY with cited evidence.
+author: usephylax
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  skill:
+    description: Path or URL to SKILL.md (e.g. ./SKILL.md or owner/repo)
+    required: true
+  mode:
+    description: Audit mode — fast (default) or deep (onchain simulation; slower, needs Base RPC)
+    required: false
+    default: fast
+  fail-on:
+    description: When to fail the step — deny (default), warn, or none
+    required: false
+    default: deny
+  manifest:
+    description: Optional path to manifest JSON (catalog.json / skills.json)
+    required: false
+    default: ""
+  contracts:
+    description: Comma-separated contract refs (auto-extracted from SKILL.md if omitted)
+    required: false
+    default: ""
+  endpoints:
+    description: Comma-separated endpoint URLs (auto-extracted if omitted)
+    required: false
+    default: ""
+  chain-id:
+    description: EVM chain ID (default 8453 — Base)
+    required: false
+    default: "8453"
+  version:
+    description: phylax-skill-audit npm version to run
+    required: false
+    default: "0.2.4"
+
+outputs:
+  verdict:
+    description: ALLOW, WARN, or DENY
+    value: ${{ steps.phylax.outputs.verdict }}
+  score:
+    description: Risk score 0–100
+    value: ${{ steps.phylax.outputs.score }}
+  summary:
+    description: One-line human summary from the audit
+    value: ${{ steps.phylax.outputs.summary }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+
+    - name: Run Phylax audit
+      id: phylax
+      shell: bash
+      env:
+        INPUT_SKILL: ${{ inputs.skill }}
+        INPUT_MODE: ${{ inputs.mode }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+        INPUT_MANIFEST: ${{ inputs.manifest }}
+        INPUT_CONTRACTS: ${{ inputs.contracts }}
+        INPUT_ENDPOINTS: ${{ inputs.endpoints }}
+        INPUT_CHAIN_ID: ${{ inputs.chain-id }}
+        INPUT_VERSION: ${{ inputs.version }}
+      run: bash "${{ github.action_path }}/scripts/action-run.sh"

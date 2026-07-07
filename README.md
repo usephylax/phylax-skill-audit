@@ -47,6 +47,30 @@ curl -X POST https://usephylax.com/api/audit \
 ./add-skill aaronjmars/aeon phylax-audit
 ```
 
+### GitHub Action (CI gate)
+
+Audit `SKILL.md` on every PR — fail on `DENY`, warn on `WARN`:
+
+```yaml
+# .github/workflows/phylax-audit.yml
+name: Phylax audit
+on:
+  pull_request:
+    paths: [SKILL.md, skills/**/SKILL.md]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: usephylax/phylax-skill-audit@v0.2.4
+        with:
+          skill: ./SKILL.md
+          fail-on: deny   # deny | warn | none
+```
+
+Outputs: `verdict`, `score`, `summary`. See [`action.yml`](./action.yml).
+
 **Positioning:** Phylax is a **security layer** for skills and x402 endpoints on [Bankr](https://bankr.bot/terminal/x402) — it audits what you install and what you pay for. It complements x402 Cloud; it does not compete with it.
 
 ## Build from source

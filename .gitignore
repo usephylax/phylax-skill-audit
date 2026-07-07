@@ -34,6 +34,10 @@ phylax-telegram-bot/**/.dev.vars
 assets/phylax-playground-demo*
 assets/phylax-x402-demo*
 assets/phylax-tweet-*
+assets/phylax-article-banner.png
+assets/article-banner.html
+assets/security-tweet-card.html
+assets/ghsa-tweet-card.html
 assets/*-tweets.md
 assets/launch-tweets.md
 assets/x402-card.html

@@ -123,6 +123,22 @@ MESSAGE=$(echo '\${{ toJson(github.event.client_payload.message) }}' | jq -r '.'
   });
 });
 
+describe("Static Scanner — Workflow script injection (PI-006)", () => {
+  it("detects PI-006 (GitHub Actions script injection via github.event interpolation)", () => {
+    const text = loadFixture("workflow-injection-skill.md");
+    const result = runStaticScan(text, piRules);
+    const pi006 = result.findings.find((f) => f.id === "PI-006");
+    expect(pi006).toBeDefined();
+    expect(pi006!.evidence).toContain("toJson(github.event.client_payload.message)");
+  });
+
+  it("does not flag PI-006 on a clean skill", () => {
+    const text = loadFixture("clean-skill.md");
+    const result = runStaticScan(text, piRules);
+    expect(result.findings.find((f) => f.id === "PI-006")).toBeUndefined();
+  });
+});
+
 describe("Static Scanner — Documentation context downgrade", () => {
   it("downgrades critical findings inside code blocks / blockquotes", () => {
     const text = loadFixture("doc-skill.md");

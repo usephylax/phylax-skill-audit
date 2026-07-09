@@ -84,6 +84,24 @@ export function rateLimited(ip: string) {
   return { limited: false, remaining: RATE_LIMIT - arr.length, resetMs, limit: RATE_LIMIT };
 }
 
+/**
+ * Global rate limit check. Uses Upstash Redis (shared across all serverless
+ * instances) when configured, and always also applies the per-instance
+ * in-memory limiter as a backstop. Limited if EITHER layer trips.
+ */
+export async function checkRateLimit(ip: string) {
+  const local = rateLimited(ip);
+  const global = await kvRateLimited(ip);
+  const limited = local.limited || global.limited;
+  return {
+    limited,
+    // report the tighter remaining budget of the two layers
+    remaining: Math.min(local.remaining, global.remaining),
+    resetMs: Math.max(local.resetMs, global.resetMs),
+    limit: RATE_LIMIT,
+  };
+}
+
 // ── Skill ref resolver ───────────────────────────────────────────────────────
 // Accepts: a raw https URL, or "owner/repo", or "owner/repo/skills/<name>",
 // or "owner/repo/path/to/SKILL.md". Returns a best-guess raw.githubusercontent URL.
@@ -176,6 +194,25 @@ export function cacheSet(key: string, value: unknown) {
     const now = Date.now();
     for (const [k, v] of cache) if (now - v.at > CACHE_TTL_MS) cache.delete(k);
   }
+}
+
+/**
+ * Global verdict cache read. Checks the per-instance in-memory cache first
+ * (fastest), then Upstash Redis (shared across instances) when configured.
+ * A Redis hit is promoted into the local cache for subsequent calls.
+ */
+export async function readCache(key: string): Promise<unknown | null> {
+  const local = cacheGet(key);
+  if (local !== null) return local;
+  const remote = await kvCacheGet(key);
+  if (remote !== null) cacheSet(key, remote);
+  return remote;
+}
+
+/** Global verdict cache write — populates both in-memory and Redis (best-effort). */
+export async function writeCache(key: string, value: unknown): Promise<void> {
+  cacheSet(key, value);
+  await kvCacheSet(key, value);
 }
 
 /** Redis when configured, otherwise per-instance in-memory limiter. */

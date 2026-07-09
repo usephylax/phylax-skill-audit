@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <radialGradient id="rhbg" cx="256" cy="216" r="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d6ff33"/>
+      <stop offset="0.7" stop-color="#c4f82a"/>
+      <stop offset="1" stop-color="#b4e81f"/>
+    </radialGradient>
+  </defs>
+
+  <!-- full-bleed lime disc background (safe for circular crop) -->
+  <rect width="512" height="512" fill="url(#rhbg)"/>
+
+  <!-- outer scanner ring -->
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#0a0a0a" stroke-width="6"
+          stroke-dasharray="34 20" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#0a0a0a" stroke-width="2" opacity="0.35"/>
+
+  <!-- ring node accents at 4 corners -->
+  <circle cx="256" cy="60"  r="7" fill="#0a0a0a"/>
+  <circle cx="256" cy="452" r="7" fill="#0a0a0a"/>
+  <circle cx="60"  cy="256" r="7" fill="#0a0a0a"/>
+  <circle cx="452" cy="256" r="7" fill="#0a0a0a"/>
+
+  <!-- shield -->
+  <g transform="translate(256 256) scale(6.6) translate(-16 -16)">
+    <path d="M16 2 L28 6 V15 C28 23 22.5 27.5 16 30 C9.5 27.5 4 23 4 15 V6 Z"
+          fill="#0a0a0a" stroke="#0a0a0a" stroke-width="2" stroke-linejoin="round"/>
+
+    <!-- horizontal scan sweep (lime, cut into black shield) -->
+    <line x1="5.5" y1="13.5" x2="26.5" y2="13.5" stroke="#c4f82a" stroke-width="0.8"
+          stroke-dasharray="1.4 2.2" opacity="0.7"/>
+
+    <!-- audit aperture -->
+    <circle cx="16" cy="13.5" r="5" fill="none" stroke="#c4f82a" stroke-width="1.9"/>
+    <circle cx="16" cy="13.5" r="1.7" fill="#d6ff33"/>
+    <!-- reticle ticks -->
+    <line x1="16" y1="6.4" x2="16" y2="8.4" stroke="#c4f82a" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="16" y1="18.6" x2="16" y2="20.6" stroke="#c4f82a" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="8.9" y1="13.5" x2="10.9" y2="13.5" stroke="#c4f82a" stroke-width="1.4" stroke-linecap="round"/>
+    <line x1="21.1" y1="13.5" x2="23.1" y2="13.5" stroke="#c4f82a" stroke-width="1.4" stroke-linecap="round"/>
+  </g>
+</svg>

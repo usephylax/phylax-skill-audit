@@ -7,7 +7,7 @@
 
 import { audit } from "phylax-skill-audit";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { clientIp, rateLimited, resolveSkillUrl, cacheGet, cacheSet } from "./_lib.js";
+import { clientIp, checkRateLimit, resolveSkillUrl, readCache, writeCache } from "./_lib.js";
 
 const COLORS: Record<string, string> = {
   ALLOW: "#3ddc97", WARN: "#f5c451", DENY: "#ff6b6b", ERROR: "#5a6072",
@@ -48,17 +48,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const rl = rateLimited(clientIp(req));
+  const rl = await checkRateLimit(clientIp(req));
   if (rl.limited) { send(res, badgeSVG("phylax", "rate limit", COLORS.ERROR), 30); return; }
 
   const mode = req.query.mode === "deep" ? "deep" : "fast";
   const cacheKey = `${skill}::${mode}`;
   try {
-    let result = cacheGet(cacheKey) as { verdict: string; score: number } | null;
+    let result = (await readCache(cacheKey)) as { verdict: string; score: number } | null;
     if (!result) {
       const url = resolveSkillUrl(skill);
       result = (await audit({ skill_source: url, mode })) as { verdict: string; score: number };
-      cacheSet(cacheKey, result);
+      await writeCache(cacheKey, result);
     }
     const color = COLORS[result.verdict] || COLORS.ERROR;
     send(res, badgeSVG("phylax", `${result.verdict} ${result.score}`, color), 21600); // 6h CDN cache

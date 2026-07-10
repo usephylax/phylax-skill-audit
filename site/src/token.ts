@@ -1,11 +1,11 @@
-/** Official $PHYLAX token on Base — single source of truth for the site. */
+/** Official $PHYLAX token on Robinhood Chain — single source of truth for the site. */
 export const TOKEN = {
-  address: "0xd7e608d398b88fe3084b495e9b86de2db343cba3",
+  address: "0xa5be32780e7307301e1932ae99d1eb98fa3d50cc",
   symbol: "PHYLAX",
-  chain: "Base",
-  chainId: 8453,
+  chain: "Robinhood Chain",
+  chainId: 4663,
   bankr: "https://bankr.bot/agents/phylax",
-  basescan: "https://basescan.org/token/0xd7e608d398b88fe3084b495e9b86de2db343cba3",
+  explorer: "https://robinhoodchain.blockscout.com/token/0xa5be32780e7307301e1932ae99d1eb98fa3d50cc",
   x: "https://x.com/usephylax",
 } as const;
 

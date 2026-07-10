@@ -25,7 +25,7 @@ export function OfficialToken() {
           eyebrow="Official token"
           title={
             <>
-              Verify on <span className="text-accent">Bankr</span> before you trade
+              Now live on <span className="text-accent">Robinhood Chain</span>
             </>
           }
           description="Only the contract below is official $PHYLAX. Anything else is not us."
@@ -38,7 +38,7 @@ export function OfficialToken() {
               ${TOKEN.symbol} · {TOKEN.chain}
             </span>
             <span className="ml-auto font-mono text-[10px] px-2 py-0.5 rounded-md verdict-allow tracking-wide">
-              VERIFIED
+              LIVE
             </span>
           </div>
 
@@ -59,8 +59,8 @@ export function OfficialToken() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-2.5">
-            <a href={TOKEN.bankr} target="_blank" rel="noopener" className="btn-primary">
-              View on Bankr
+            <a href={TOKEN.explorer} target="_blank" rel="noopener" className="btn-primary">
+              View on Explorer
               <IconArrowRight size={16} />
             </a>
             <a href={TOKEN.x} target="_blank" rel="noopener" className="btn-ghost">

@@ -1,5 +1,5 @@
 import { PhylaxLogo } from "./Icons";
-import { TOKEN } from "../token";
+import { TOKEN, shortenAddress } from "../token";
 
 const LINKS = [
   { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
@@ -33,7 +33,7 @@ export function Footer() {
           </nav>
 
           <p className="text-[11px] text-text-muted font-mono text-center sm:text-right">
-            ${TOKEN.symbol} · {TOKEN.status} on {TOKEN.launchpad}
+            ${TOKEN.symbol} · {shortenAddress(TOKEN.address, 6, 4)}
           </p>
         </div>
       </div>

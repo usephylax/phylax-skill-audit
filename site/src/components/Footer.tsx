@@ -1,10 +1,9 @@
 import { PhylaxLogo } from "./Icons";
-import { TOKEN, shortenAddress } from "../token";
+import { TOKEN } from "../token";
 
 const LINKS = [
   { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
   { label: "npm", href: "https://www.npmjs.com/package/phylax-skill-audit" },
-  { label: "Bankr", href: TOKEN.bankr },
   { label: "x402", href: "https://bankr.bot/terminal/x402" },
   { label: "API", href: "#integration" },
 ] as const;
@@ -34,7 +33,7 @@ export function Footer() {
           </nav>
 
           <p className="text-[11px] text-text-muted font-mono text-center sm:text-right">
-            ${TOKEN.symbol} {shortenAddress(TOKEN.address, 6, 4)}
+            ${TOKEN.symbol} · {TOKEN.status} on {TOKEN.launchpad}
           </p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { m } from "framer-motion";
 import { PhylaxLogo, IconArrowRight } from "./Icons";
-import { TOKEN, shortenAddress } from "../token";
+import { TOKEN } from "../token";
 import { TerminalWindow } from "./TerminalWindow";
 import { springSoft } from "../motion";
 
@@ -71,10 +71,10 @@ export function Hero() {
         >
           <a
             href="#token"
-            className="inline-flex items-center gap-2 text-[11px] font-mono text-emerald-400/80 hover:text-emerald-400 transition-colors"
+            className="inline-flex items-center gap-2 text-[11px] font-mono text-accent/80 hover:text-accent transition-colors"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot" />
-            ${TOKEN.symbol} · {shortenAddress(TOKEN.address)}
+            <span className="w-1.5 h-1.5 rounded-full bg-accent pulse-dot" />
+            ${TOKEN.symbol} · {TOKEN.status} on {TOKEN.launchpad}
           </a>
         </m.div>
 

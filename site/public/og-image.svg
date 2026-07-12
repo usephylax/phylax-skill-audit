@@ -5,8 +5,8 @@
       <stop offset="1" stop-color="#06080C"/>
     </linearGradient>
     <linearGradient id="edge" x1="600" y1="150" x2="600" y2="470" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#48D8FF"/>
-      <stop offset="1" stop-color="#3B82F6"/>
+      <stop offset="0" stop-color="#d6ff33"/>
+      <stop offset="1" stop-color="#b4e81f"/>
     </linearGradient>
     <radialGradient id="core" cx="220" cy="300" r="150" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#11203A"/>
@@ -27,14 +27,14 @@
   <g transform="translate(120 175) scale(2.55)">
     <path d="M32 3 L55 11 V29 C55 44 45.5 54 32 60 C18.5 54 9 44 9 29 V11 Z"
           fill="url(#core)" stroke="url(#edge)" stroke-width="2.5" stroke-linejoin="round"/>
-    <circle cx="32" cy="30" r="9.5" fill="none" stroke="#3B82F6" stroke-width="2"/>
-    <circle cx="32" cy="30" r="5.5" fill="none" stroke="#48D8FF" stroke-width="1.4"/>
-    <circle cx="32" cy="30" r="2" fill="#48D8FF"/>
-    <line x1="32" y1="17" x2="32" y2="22.5" stroke="#48D8FF" stroke-width="1.6" stroke-linecap="round"/>
-    <line x1="32" y1="37.5" x2="32" y2="43" stroke="#48D8FF" stroke-width="1.6" stroke-linecap="round"/>
-    <line x1="19" y1="30" x2="24.5" y2="30" stroke="#48D8FF" stroke-width="1.6" stroke-linecap="round"/>
-    <line x1="39.5" y1="30" x2="45" y2="30" stroke="#48D8FF" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M27 47.5 L30.5 51 L38 43.5" fill="none" stroke="#48D8FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="32" cy="30" r="9.5" fill="none" stroke="#b4e81f" stroke-width="2"/>
+    <circle cx="32" cy="30" r="5.5" fill="none" stroke="#d6ff33" stroke-width="1.4"/>
+    <circle cx="32" cy="30" r="2" fill="#d6ff33"/>
+    <line x1="32" y1="17" x2="32" y2="22.5" stroke="#d6ff33" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="32" y1="37.5" x2="32" y2="43" stroke="#d6ff33" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="19" y1="30" x2="24.5" y2="30" stroke="#d6ff33" stroke-width="1.6" stroke-linecap="round"/>
+    <line x1="39.5" y1="30" x2="45" y2="30" stroke="#d6ff33" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M27 47.5 L30.5 51 L38 43.5" fill="none" stroke="#d6ff33" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
   <!-- Wordmark + tagline -->

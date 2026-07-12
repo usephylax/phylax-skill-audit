@@ -7,8 +7,8 @@
   --color-bg-band: #0A0A10;
   --color-border-subtle: #1E1E26;
   --color-border-faint: #16161C;
-  --color-accent: #3B82F6;
-  --color-scan: #48D8FF;
+  --color-accent: #c4f82a;
+  --color-scan: #d6ff33;
   --color-critical: #EF4444;
   --color-high: #F97316;
   --color-medium: #EAB308;
@@ -202,9 +202,9 @@
     border-radius: 0.625rem;
     font-size: 0.875rem;
     font-weight: 500;
-    background: linear-gradient(180deg, #4a8ff7 0%, var(--color-accent) 100%);
-    color: white;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 4px 16px -4px rgba(59, 130, 246, 0.45);
+    background: linear-gradient(180deg, #d6ff33 0%, var(--color-accent) 100%);
+    color: #0a0a0a;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 4px 16px -4px rgba(196, 248, 42, 0.45);
     transition:
       transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
@@ -212,7 +212,7 @@
   }
   .btn-primary:hover {
     filter: brightness(1.06);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 8px 24px -6px rgba(59, 130, 246, 0.55);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset, 0 8px 24px -6px rgba(196, 248, 42, 0.55);
   }
   .btn-primary:active { transform: scale(0.98); }
 

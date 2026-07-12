@@ -1,18 +1,11 @@
 // api/_lib.ts — shared helpers for the Phylax HTTP API (not a route; underscore-prefixed).
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { productionFetchPolicy, validateFetchUrl } from "phylax-skill-audit";
-import { kvRateLimited, kvCacheGet, kvCacheSet, type RateLimitResult } from "./_kv.js";
-
-function hasKvConfig(): boolean {
-  return Boolean(
-    process.env.UPSTASH_REDIS_REST_URL?.trim() &&
-      process.env.UPSTASH_REDIS_REST_TOKEN?.trim(),
-  );
-}
+import { kvRateLimited, kvCacheGet, kvCacheSet } from "./_kv.js";
 
 export const ALLOWED_MODES = new Set(["fast", "deep"]);
 
-/** Paid deep audits on Bankr x402 Cloud — set after `bankr x402 deploy`. */
+/** Paid deep audits on x402 Cloud — set after `x402 deploy`. */
 export const X402_DEEP_AUDIT_URL =
   process.env.PHYLAX_X402_DEEP_URL?.trim() ||
   "https://x402.bankr.bot/0x7fc2987df6e0fb7567d64838696a5bac4d220b91/audit-deep";
@@ -22,7 +15,7 @@ export function deepAuditPaymentRequired() {
   return {
     error: "Deep audit requires x402 payment.",
     detail:
-      "Fast mode is free on this endpoint. Deep mode (honeypot simulation + full onchain checks) is $0.05 USDC/request on Bankr x402 Cloud.",
+      "Fast mode is free on this endpoint. Deep mode (honeypot simulation + full onchain checks) is $0.05 USDC/request on x402 Cloud.",
     mode: "deep",
     pricing: { model: "x402", amount_usdc: X402_DEEP_PRICE_USDC, currency: "USDC", network: "base" },
     x402_endpoint: X402_DEEP_AUDIT_URL,
@@ -210,25 +203,6 @@ export async function readCache(key: string): Promise<unknown | null> {
 }
 
 /** Global verdict cache write — populates both in-memory and Redis (best-effort). */
-export async function writeCache(key: string, value: unknown): Promise<void> {
-  cacheSet(key, value);
-  await kvCacheSet(key, value);
-}
-
-/** Redis when configured, otherwise per-instance in-memory limiter. */
-export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
-  if (hasKvConfig()) return kvRateLimited(ip);
-  return rateLimited(ip);
-}
-
-/** Read verdict cache — Redis first, then in-memory fallback. */
-export async function readCache(key: string): Promise<unknown | null> {
-  const kv = await kvCacheGet(key);
-  if (kv !== null) return kv;
-  return cacheGet(key);
-}
-
-/** Write verdict cache to both tiers (best-effort Redis). */
 export async function writeCache(key: string, value: unknown): Promise<void> {
   cacheSet(key, value);
   await kvCacheSet(key, value);

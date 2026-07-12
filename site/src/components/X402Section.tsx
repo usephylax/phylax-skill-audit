@@ -15,8 +15,8 @@ const tiers = [
   {
     name: "Deep",
     price: `$${X402.deepPriceUsdc} USDC`,
-    where: "Bankr x402 Cloud",
-    detail: "Honeypot simulation on Base + full onchain checks. Paid per request.",
+    where: "x402 Cloud",
+    detail: "Honeypot simulation on Robinhood Chain + full onchain checks. Paid per request.",
   },
 ];
 
@@ -25,7 +25,7 @@ export function X402Section() {
     <section id="x402" className="section-pad">
       <div className="page-container">
         <SectionHeader
-          eyebrow="Bankr x402"
+          eyebrow="x402"
           title={
             <>
               Security layer for <span className="text-accent">skills & x402 APIs</span>
@@ -51,7 +51,7 @@ export function X402Section() {
           <TerminalWindow title="x402 · audit-deep">
             <div className="p-4 sm:p-5 terminal-body overflow-x-auto text-left">
               <div className="terminal-line text-text-muted text-[11px] mb-3">
-                # Deploy once: bankr x402 deploy → $0.05 USDC/request
+                # Deploy once: x402 deploy → $0.05 USDC/request
               </div>
               <div className="terminal-line">
                 <span className="text-accent">POST</span>
@@ -60,7 +60,7 @@ export function X402Section() {
               <pre className="mt-3 text-[11px] sm:text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
 {`{
   "skill_source": "owner/repo/SKILL.md",
-  "chain_id": 8453
+  "chain_id": 4663
 }`}
               </pre>
             </div>

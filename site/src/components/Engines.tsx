@@ -13,7 +13,7 @@ const engines = [
   {
     icon: IconOnchainScan,
     title: "Onchain",
-    desc: "Bytecode on Base — approvals, proxies, honeypot simulation.",
+    desc: "Bytecode on Robinhood Chain — approvals, proxies, honeypot simulation.",
     tags: ["CON-*", "LIQ-*"],
   },
   {

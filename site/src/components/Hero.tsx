@@ -7,7 +7,7 @@ import { springSoft } from "../motion";
 const scanLines = [
   "Loading rules from /rules/*.yaml",
   "Running static scan...",
-  "Running onchain scan (Base 8453)...",
+  "Running onchain scan (Robinhood Chain)...",
   "Running endpoint scan...",
 ];
 
@@ -23,7 +23,7 @@ export function Hero() {
         >
           <PhylaxLogo size={14} />
           <span className="font-mono text-[10px] sm:text-[11px] text-text-muted tracking-wider">
-            PRE-INSTALL SECURITY · BASE
+            PRE-INSTALL SECURITY · ROBINHOOD
           </span>
         </m.div>
 
@@ -44,7 +44,7 @@ export function Hero() {
           transition={{ ...springSoft, delay: 0.12 }}
           className="mt-4 text-sm sm:text-base text-text-secondary max-w-lg mx-auto leading-relaxed"
         >
-          Security layer for Bankr skills &amp; x402 APIs. Scans SKILL.md, contracts,
+          Security layer for AI agent skills &amp; x402 APIs. Scans SKILL.md, contracts,
           and payment endpoints — deterministic verdict with evidence.
         </m.p>
 

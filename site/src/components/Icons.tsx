@@ -46,13 +46,13 @@ export function PhylaxLogo(props: IconProps) {
         strokeLinejoin="round"
       />
       {/* Audit aperture — the scan/lock eye */}
-      <circle cx="16" cy="14.5" r="5" stroke="#3B82F6" strokeWidth="1.8" />
-      <circle cx="16" cy="14.5" r="1.6" fill="#3B82F6" stroke="none" />
+      <circle cx="16" cy="14.5" r="5" stroke="#c4f82a" strokeWidth="1.8" />
+      <circle cx="16" cy="14.5" r="1.6" fill="#c4f82a" stroke="none" />
       {/* Reticle ticks */}
-      <line x1="16" y1="7" x2="16" y2="9.5" stroke="#3B82F6" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="16" y1="19.5" x2="16" y2="22" stroke="#3B82F6" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="8.5" y1="14.5" x2="11" y2="14.5" stroke="#3B82F6" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="21" y1="14.5" x2="23.5" y2="14.5" stroke="#3B82F6" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="16" y1="7" x2="16" y2="9.5" stroke="#c4f82a" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="16" y1="19.5" x2="16" y2="22" stroke="#c4f82a" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="8.5" y1="14.5" x2="11" y2="14.5" stroke="#c4f82a" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="21" y1="14.5" x2="23.5" y2="14.5" stroke="#c4f82a" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }

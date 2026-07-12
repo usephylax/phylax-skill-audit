@@ -11,7 +11,7 @@ const codeLines = [
   "",
   'const result = await audit({',
   '  skill_source: "owner/repo/SKILL.md",',
-  "  chain_id: 8453,",
+  "  chain_id: 4663,",
   '  mode: "fast",',
   "});",
   "",
@@ -40,7 +40,7 @@ export function DevelopersSection() {
               npm, API, <span className="text-accent">embed badge</span>
             </>
           }
-          description="Fast mode is free (CLI + API). Deep mode ($0.05 USDC) on Bankr x402 Cloud — honeypot simulation on Base."
+          description="Fast mode is free (CLI + API). Deep mode ($0.05 USDC) on x402 Cloud — honeypot simulation on Robinhood Chain."
         />
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -80,7 +80,7 @@ export function DevelopersSection() {
             </TerminalWindow>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              {["npm v0.2.4", "Base 8453", "SSRF-hardened"].map((t) => (
+              {["npm v0.2.4", "Robinhood 4663", "SSRF-hardened"].map((t) => (
                 <span key={t} className="tag-pill">
                   {t}
                 </span>

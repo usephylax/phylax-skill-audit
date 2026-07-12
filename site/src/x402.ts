@@ -8,5 +8,5 @@ export const X402 = {
   deepAuditUrl:
     import.meta.env.VITE_PHYLAX_X402_DEEP_URL?.trim() ||
     "https://x402.bankr.bot/0x7fc2987df6e0fb7567d64838696a5bac4d220b91/audit-deep",
-  tagline: "Security layer for skills & x402 endpoints on Bankr",
+  tagline: "Security layer for skills & x402 endpoints",
 } as const;

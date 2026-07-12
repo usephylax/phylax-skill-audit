@@ -50,7 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           fast: { price: "free", endpoint: "this API (mode=fast)" },
           deep: { price: "$0.05 USDC", endpoint: X402_DEEP_AUDIT_URL, model: "x402" },
         },
-        positioning: "Security layer for skills & x402 endpoints on Bankr — complements x402 Cloud.",
+        positioning: "Security layer for skills & x402 endpoints — complements x402 Cloud.",
       });
       return;
     }

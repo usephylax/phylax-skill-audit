@@ -29,17 +29,21 @@ export function FinalCta() {
           <p className="mt-5 text-[11px] text-text-muted font-mono">
             v0.2.4 · MIT ·{" "}
             <a
-              href="https://bankr.bot/agents/phylax"
+              href="https://x.com/usephylax"
+              target="_blank"
+              rel="noopener"
               className="text-text-secondary hover:text-accent transition-colors"
             >
-              Bankr
+              X
             </a>
             {" · "}
             <a
-              href="https://bankr.bot/terminal/x402"
+              href="https://github.com/usephylax/phylax-skill-audit"
+              target="_blank"
+              rel="noopener"
               className="text-text-secondary hover:text-accent transition-colors"
             >
-              x402
+              GitHub
             </a>
           </p>
         </m.div>

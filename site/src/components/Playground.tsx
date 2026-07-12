@@ -290,7 +290,7 @@ export function Playground() {
             </TerminalWindow>
             <p className="mt-3 text-[12px] text-text-muted text-center lg:text-left">
               Read-only · deterministic · free fast engine. Deep mode (honeypot sim) is $0.05
-              USDC via Bankr x402.
+              USDC via x402.
             </p>
           </m.div>
         </div>

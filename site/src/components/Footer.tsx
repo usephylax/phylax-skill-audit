@@ -4,7 +4,7 @@ import { TOKEN } from "../token";
 const LINKS = [
   { label: "GitHub", href: "https://github.com/usephylax/phylax-skill-audit" },
   { label: "npm", href: "https://www.npmjs.com/package/phylax-skill-audit" },
-  { label: "x402", href: "https://bankr.bot/terminal/x402" },
+  { label: "x402", href: "#x402" },
   { label: "API", href: "#integration" },
 ] as const;
 

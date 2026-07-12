@@ -18,7 +18,7 @@ export type Mode = "fast" | "deep";
 export interface Rule {
   id: string;           // e.g. "PI-001"
   severity: Severity;
-  category: "PI" | "SEC" | "CON" | "X402" | "MAN" | "LIQ";
+  category: "PI" | "SEC" | "CON" | "X402" | "MAN" | "LIQ" | "AGT";
   description: string;
   /** Regex patterns or keyword lists used for matching (static rules). */
   patterns?: string[];

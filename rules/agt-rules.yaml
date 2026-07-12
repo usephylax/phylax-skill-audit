@@ -1,0 +1,52 @@
+# Phylax Rules — Agent Authorization Risk (AGT-*)
+# Detects skills that ask an autonomous agent for excessive wallet authority:
+# blanket/unlimited spend approvals, auto-execution of trades without user
+# confirmation, or persistent session/permission escalation. These are the
+# core risks when an agent can trade or move funds "on your behalf".
+
+rules:
+  - id: AGT-001
+    severity: critical
+    description: "Skill requests unlimited / maximum token spending approval"
+    patterns:
+      - "approve\\s+(unlimited|max(imum)?|infinite)\\b"
+      - "(set|grant)\\s+(the\\s+)?allowance\\s+to\\s+(unlimited|max(imum)?|infinite)"
+      - "unlimited\\s+(token\\s+)?(approval|allowance|spending)"
+      - "type\\s*\\(\\s*uint256\\s*\\)\\.max"
+      - "2\\s*\\*\\*\\s*256\\s*-\\s*1"
+      - "0xf{60,64}"
+      - "grant\\s+(full|unlimited|unrestricted)\\s+(spending|token|wallet)\\s+(access|approval|allowance)"
+      - "approve\\s+all\\s+(your\\s+)?tokens"
+      - "beri(kan)?\\s+(izin|akses)\\s+(tak\\s+terbatas|penuh)\\s+(token|dana|wallet)"
+
+  - id: AGT-002
+    severity: high
+    description: "Skill instructs the agent to auto-execute trades/transactions without user confirmation"
+    patterns:
+      - "auto[-\\s]?(execute|trade|swap|approve|sign|buy|sell)\\b"
+      - "execute\\s+(trades?|swaps?|transactions?)\\s+automatically"
+      - "without\\s+(the\\s+)?(user|human)?\\s*(confirmation|approval|review|consent)"
+      - "(skip|bypass)\\s+(the\\s+)?(confirmation|approval|review|safety)\\s*(prompt|step|check)?"
+      - "no\\s+confirmation\\s+(needed|required)"
+      - "trade\\s+on\\s+(your|the\\s+user'?s)\\s+behalf\\s+without"
+      - "tanpa\\s+(konfirmasi|persetujuan)\\s+(pengguna|user)?"
+
+  - id: AGT-003
+    severity: high
+    description: "Skill requests persistent wallet access or disabling of safety prompts"
+    patterns:
+      - "disable\\s+(the\\s+)?(safety|security|confirmation|approval)\\s+(\\w+\\s+)?(prompt|check|guard|dialog)"
+      - "turn\\s+off\\s+(the\\s+)?(safety|security|confirmation)"
+      - "grant\\s+(persistent|permanent|unrestricted|standing)\\s+wallet\\s+access"
+      - "keep\\s+(the\\s+)?wallet\\s+(unlocked|connected)\\s+(permanently|indefinitely|forever)"
+      - "remember\\s+(and\\s+reuse\\s+)?(the\\s+)?(signing\\s+)?session\\s+key"
+      - "matikan\\s+(prompt|konfirmasi|pengaman)\\s+(keamanan|keselamatan)?"
+
+  - id: AGT-004
+    severity: medium
+    description: "Skill requests broad, open-ended trading permissions or spend limits"
+    patterns:
+      - "(full|complete|blanket)\\s+trading\\s+(permission|authority|access)"
+      - "(raise|remove|lift)\\s+(the\\s+)?(spend|spending|daily)\\s+limit"
+      - "no\\s+(spend|spending|daily)\\s+limit"
+      - "trade\\s+any\\s+(amount|token|pair)\\s+without\\s+limit"

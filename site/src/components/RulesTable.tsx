@@ -16,6 +16,8 @@ const rules = [
   { id: "PI-001", severity: "critical" as const, cat: "PI", desc: "Fund transfer instruction" },
   { id: "PI-002", severity: "critical" as const, cat: "PI", desc: "Override safety instructions" },
   { id: "SEC-001", severity: "critical" as const, cat: "SEC", desc: "Private key / seed request" },
+  { id: "AGT-001", severity: "critical" as const, cat: "AGT", desc: "Unlimited spend approval" },
+  { id: "AGT-002", severity: "high" as const, cat: "AGT", desc: "Auto-execute without confirmation" },
   { id: "CON-020", severity: "critical" as const, cat: "CON", desc: "Honeypot detection" },
   { id: "CON-010", severity: "high" as const, cat: "CON", desc: "Unlimited approval" },
   { id: "CON-011", severity: "high" as const, cat: "CON", desc: "Proxy + single owner" },

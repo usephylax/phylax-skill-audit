@@ -42,6 +42,7 @@ export async function audit(input: AuditInput): Promise<AuditOutput> {
   const conRules = rulesByCategory(allRules, "CON");
   const x402Rules = rulesByCategory(allRules, "X402");
   const liqRules = rulesByCategory(allRules, "LIQ");
+  const agtRules = rulesByCategory(allRules, "AGT");
 
   // 2. Get SKILL.md content
   const skillMd = input.skill_md ?? (await fetchSkillMd(input.skill_source));
@@ -61,6 +62,12 @@ export async function audit(input: AuditInput): Promise<AuditOutput> {
 
   const secResult = runStaticScan(skillMd, secRules);
   allFindings.push(...secResult.findings);
+
+  // AGT — agent authorization risk: unlimited approvals, auto-execution,
+  // permission escalation requested in the skill text. Directly relevant when
+  // an agent can trade or move funds on the user's behalf.
+  const agtResult = runStaticScan(skillMd, agtRules);
+  allFindings.push(...agtResult.findings);
 
   // CON/LIQ rules carry static text patterns (e.g. sell-tax, privileged
   // functions, hidden mint) that describe risky behaviour declared directly

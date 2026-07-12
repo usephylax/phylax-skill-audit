@@ -13,7 +13,7 @@ import type { Rule } from "./types.js";
 function deriveCategory(ruleId: string): Rule["category"] {
   const prefix = ruleId.split("-")[0];
   const valid: Record<string, Rule["category"]> = {
-    PI: "PI", SEC: "SEC", CON: "CON", X402: "X402", MAN: "MAN", LIQ: "LIQ",
+    PI: "PI", SEC: "SEC", CON: "CON", X402: "X402", MAN: "MAN", LIQ: "LIQ", AGT: "AGT",
   };
   return valid[prefix] ?? "PI"; // fallback
 }

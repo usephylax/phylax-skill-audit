@@ -7,8 +7,8 @@ const engines = [
   {
     icon: IconStaticScan,
     title: "Static",
-    desc: "SKILL.md & manifest — injection, secret exfiltration, obfuscation.",
-    tags: ["PI-*", "SEC-*", "MAN-*"],
+    desc: "SKILL.md & manifest — injection, secret exfil, agent authorization.",
+    tags: ["PI-*", "SEC-*", "AGT-*", "MAN-*"],
   },
   {
     icon: IconOnchainScan,
